@@ -4,3 +4,6 @@
 [lb-checkout "Phys.Phys/DaVinciInterfaces"]
 	base = 1eeccfdc62fb405ea53d32fddd07c68da62df36e
 	imported = 39728fe376f3c02e2606254dd30da2f798f0a117
+[lb-checkout "Phys.Phys/LoKiJets"]
+	base = d0c356273a892aa5cd6536ed0a42ba95197629df
+	imported = 39728fe376f3c02e2606254dd30da2f798f0a117

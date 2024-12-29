@@ -31,6 +31,7 @@ lhcb_add_subdirectories(
     # -- begin: list of subdirectories --
     Phys/DaVinciInterfaces
     Phys/JetAccessories
+    Phys/LoKiJets
     # -- end: list of subdirectories --
 )
 
