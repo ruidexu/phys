@@ -53,6 +53,11 @@ StatusCode LoKi::FastJetMaker::initialize() {
 // ============================================================================
 // prepare the input information
 // ============================================================================
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// This sequence converts Particles into Pseudojets
+// Can be reused
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 fastjet::JetDefinition LoKi::FastJetMaker::prepare( const IJetMaker::Input&          input,
                                                     std::vector<fastjet::PseudoJet>& jets ) const {
   // input container of "particles"
@@ -119,6 +124,7 @@ StatusCode LoKi::FastJetMaker::makeJets( const IJetMaker::Input& input_, IJetMak
     return StatusCode::SUCCESS;
   }
   // Jets found
+  // rdc where jet clustering happens
   Jets_ jets;
 
   fastjet::ClusterSequence* clusters = new fastjet::ClusterSequence( inputs, jetDef );

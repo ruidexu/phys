@@ -34,6 +34,7 @@
 #include "Kernel/ISetInputParticles.h"
 #include "Kernel/ITrackIsolation.h"
 #include "Kernel/IVertexFit.h"
+#include "IConstituentSubtractor.h"
 // ============================================================================
 /** @file
  *  Implementation file for class some interfaces from

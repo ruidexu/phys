@@ -24,10 +24,13 @@ gaudi_add_module(LoKiJets
         src/LoKiSeedConeJetMaker.cpp
         src/LoKiSeedFinder.cpp
         src/LoKiVVSeedFinder.cpp
+        src/LoKiConstituentSubtractor.cpp
     LINK
         AIDA::aida
         Boost::headers
         FastJet::FastJet
+        fjcontrib::fjcontrib
+        fjcontrib::ConstituentSubtractor
         Gaudi::GaudiAlgLib
         Gaudi::GaudiKernel
         Gaudi::GaudiUtilsLib
