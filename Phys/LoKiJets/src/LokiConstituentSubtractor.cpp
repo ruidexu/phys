@@ -138,11 +138,12 @@ StatusCode LoKi::ConstituentSub::initializeSubtractor(
 
 // ===========================================================================
 // Process input particles into background-subtracked output particles (as "jets")
-StatusCode LoKi::ConstituentSub::makeJets( const IJetMaker::Input& input, IJetMaker::Output& jets_ ) const {
+StatusCode LoKi::ConstituentSub::makeJets( const IConstituentSubtractor::Input& rawJets, IConstituentSubtractor::Output& subtractedJets ) const {
+  const Input& rawJets, Output& subtractedJets
 
   // First process particles from event into a vector of fastjet::PseudoJet objects
   std::vector<fastjet::PseudoJet> full_event;
-  StatusCode sc = this->prepareEvent(input, full_event);
+  StatusCode sc = this->prepareEvent(rawJets, full_event);
   if ( sc.isFailure() ) {
     std::cerr << "Could not prepare event for Constituent Subtractor" << std::endl;
     return sc;
@@ -150,9 +151,9 @@ StatusCode LoKi::ConstituentSub::makeJets( const IJetMaker::Input& input, IJetMa
 
   // Trivial case of no particles in event
   if ( full_event.empty() ) {
-    IJetMaker::Jets output;
+    IConstituentSubtractor::Output output;
     output.reserve( 0 );
-    jets_ = output;
+    subtractedJets = output;
     if ( msgLevel( MSG::DEBUG ) && !(this->m_suppress_logging) ) { counter( "#jets" ) += output.size(); }
     return StatusCode::SUCCESS;
   }
@@ -162,8 +163,8 @@ StatusCode LoKi::ConstituentSub::makeJets( const IJetMaker::Input& input, IJetMa
   std::vector<fastjet::PseudoJet> corrected_event = this->m_subtractor->subtract_event(full_event);
 
   // Copy corrected event into the proper output object
-  IJetMaker::Jets output;
-  sc = this->prepareOutput(input, corrected_event, output);
+  IConstituentSubtractor::Output output;
+  sc = this->prepareOutput(rawJets, corrected_event, output);
   if ( sc.isFailure() ) {
     std::cerr << "Could not prepare output for Constituent Subtractor" << std::endl;
     return sc;
@@ -171,7 +172,7 @@ StatusCode LoKi::ConstituentSub::makeJets( const IJetMaker::Input& input, IJetMa
 
   if ( msgLevel( MSG::DEBUG ) && !(this->m_suppress_logging) ) { counter( "#jets" ) += output.size(); }
 
-  jets_ = output;
+  subtractedJets = output;
 
   return StatusCode::SUCCESS;
 }

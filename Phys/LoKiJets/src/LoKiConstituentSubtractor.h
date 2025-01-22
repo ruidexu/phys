@@ -23,7 +23,7 @@
 #include "GaudiAlg/GaudiTool.h"  // inherit properties from GaudiTool
 
 // DaVinci kernel
-#include "Kernel/IJetMaker.h"  // create PseudoJet object for each "particle"
+#include "Kernel/IConstituentSubtractor.h"  // create PseudoJet object for each "particle"
 
 // LoKi
 #include "LoKi/ILoKiSvc.h"  // for initializing class
@@ -51,9 +51,9 @@ namespace LoKi {
    */
 
   //
-  class ConstituentSub : public virtual IJetMaker, public GaudiTool {
+  class ConstituentSub : public virtual IConstituentSubtractor, public GaudiTool {
     public:
-      StatusCode makeJets( const IJetMaker::Input& rawJets, IJetMaker::Output& subtractedJets) const override;
+      StatusCode makeJets( const IConstituentSubtractor::Input& rawJets, IConstituentSubtractor::Output& subtractedJets) const override;
 
       // Constructor
       ConstituentSub( const std::string& type, const std::string& name, const IInterface* parent )
