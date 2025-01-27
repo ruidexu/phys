@@ -70,14 +70,12 @@ namespace LoKi {
           m_fix_pseudorapidity( false ),
           m_do_mass_subtraction( false ),
           m_scale_fourmomentum( false ),
-          m_suppress_logging( false ),
-          m_bge_rho( m_max_eta , m_bge_rho_grid_size ) {
+          m_suppress_logging( false ) {
 
         // Set the background estimator to calculate background desnity (rho)
         // Options: GridMedianBackgroundEstimator or JetMedianBackgroundEstimator
         //   -- use former by default (TODO: implement choice of estimator)
         //this->m_bge_rho = new fastjet::GridMedianBackgroundEstimator( this->m_max_eta, this->m_bge_rho_grid_size );
-        this->m_bge_rho= new fastjet::GridMedianBackgroundEstimator(this->m_max_eta, this->m_bge_rho_grid_size);
 
         // Initialize background subtractor
         this->m_subtractor = new fastjet::contrib::ConstituentSubtractor();
@@ -137,11 +135,10 @@ namespace LoKi {
         }
         return StatusCode::SUCCESS;
       }
-
-      //fastjet::GridMedianBackgroundEstimator* m_bge_rho = nullptr;  // Background estimator
+      
+      fastjet::GridMedianBackgroundEstimator m_bge_rho = fastjet::GridMedianBackgroundEstimator(m_max_eta, m_bge_rho_grid_size);  // Background estimator
       //fastjet::GridMedianBackgroundEstimator m_bge_rho = fastjet::GridMedianBackgroundEstimator( m_max_eta, m_bge_rho_grid_size );
       fastjet::contrib::ConstituentSubtractor* m_subtractor = nullptr;  // Background subtractor object
-
 
       // Initialize the fastjet constituent subtractor using provided parameters
       StatusCode initializeSubtractor(

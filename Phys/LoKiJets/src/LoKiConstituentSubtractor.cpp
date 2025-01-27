@@ -50,7 +50,9 @@ StatusCode LoKi::ConstituentSub::initializeSubtractor(
   this->m_subtractor->set_alpha(this->m_alpha);
   this->m_subtractor->set_ghost_area(this->m_ghost_area);
   this->m_subtractor->set_max_eta(this->m_max_eta);
+  //m_bge_rho(this->m_max_eta, this->m_bge_rho_grid_size);
   this->m_subtractor->set_background_estimator((fastjet::BackgroundEstimatorBase*)(&m_bge_rho));
+  
 
   // How to treat massive particles
   if (keep_original_masses) { this->m_subtractor->set_keep_original_masses(); }
