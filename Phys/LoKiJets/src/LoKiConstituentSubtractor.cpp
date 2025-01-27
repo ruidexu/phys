@@ -138,41 +138,42 @@ StatusCode LoKi::ConstituentSub::initializeSubtractor(
 
 // ===========================================================================
 // Process input particles into background-subtracked output particles (as "jets")
-StatusCode LoKi::ConstituentSub::makeJets( const IConstituentSubtractor::Input& rawJets, IConstituentSubtractor::Output& subtractedJets ) const {
-  const Input& rawJets, Output& subtractedJets
+///------>rdc<------ Made this function mutable, the set_partciles member is a non const function, cannot be called
+StatusCode LoKi::ConstituentSub::subJets( const IConstituentSubtractor::Input& rawJets, IConstituentSubtractor::Output& subtractedJets ) {
 
   // First process particles from event into a vector of fastjet::PseudoJet objects
-  std::vector<fastjet::PseudoJet> full_event;
-  StatusCode sc = this->prepareEvent(rawJets, full_event);
-  if ( sc.isFailure() ) {
+  //std::vector<fastjet::PseudoJet> full_event;
+  //StatusCode sc = this->prepareEvent(rawJets, full_event);
+  /*if ( sc.isFailure() ) {
     std::cerr << "Could not prepare event for Constituent Subtractor" << std::endl;
     return sc;
   }
+  */
 
   // Trivial case of no particles in event
-  if ( full_event.empty() ) {
-    IConstituentSubtractor::Output output;
-    output.reserve( 0 );
-    subtractedJets = output;
-    if ( msgLevel( MSG::DEBUG ) && !(this->m_suppress_logging) ) { counter( "#jets" ) += output.size(); }
+  if ( rawJets.empty() ) {
+    subtractedJets = rawJets;
+    if ( msgLevel( MSG::DEBUG ) && !(this->m_suppress_logging) ) { counter( "#jets" ) += rawJets.size(); }
     return StatusCode::SUCCESS;
   }
 
   // Estimate the background density (rho) for this event
-  this->m_bge_rho.set_particles(full_event);
-  std::vector<fastjet::PseudoJet> corrected_event = this->m_subtractor->subtract_event(full_event);
+  this->m_bge_rho.set_particles(rawJets);
+  std::vector<fastjet::PseudoJet> corrected_event = this->m_subtractor->subtract_event(rawJets);
+
+  // copy the corrected_event to subtracted Jets
+  subtractedJets = corrected_event;
 
   // Copy corrected event into the proper output object
-  IConstituentSubtractor::Output output;
+  /*IConstituentSubtractor::Output output{};
   sc = this->prepareOutput(rawJets, corrected_event, output);
   if ( sc.isFailure() ) {
     std::cerr << "Could not prepare output for Constituent Subtractor" << std::endl;
     return sc;
   }
+  */
 
-  if ( msgLevel( MSG::DEBUG ) && !(this->m_suppress_logging) ) { counter( "#jets" ) += output.size(); }
-
-  subtractedJets = output;
+  if ( msgLevel( MSG::DEBUG ) && !(this->m_suppress_logging) ) { counter( "#jets" ) += subtractedJets.size(); }
 
   return StatusCode::SUCCESS;
 }

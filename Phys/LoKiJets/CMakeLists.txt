@@ -13,6 +13,38 @@ Phys/LoKiJets
 -------------
 #]=======================================================================]
 
+find_path(FJCONTRIB_INCLUDE_DIR fastjet/contrib/ConstituentSubtractor.hh
+          HINTS $ENV{FJCONTRIB_ROOT_DIR}/include ${FJCONTRIB_ROOT_DIR}/include)
+
+find_library(FJCONTRIB_LIBRARY NAMES fastjetcontribfragile
+             HINTS $ENV{FJCONTRIB_ROOT_DIR}/lib ${FJCONTRIB_ROOT_DIR}/lib)
+
+find_library(FJCONTRIB_CS_LIBRARY NAMES ConstituentSubtractor
+             HINTS $ENV{FJCONTRIB_ROOT_DIR}/lib ${FJCONTRIB_ROOT_DIR}/lib)
+
+# handle the QUIETLY and REQUIRED arguments and set FJCONTRIB_FOUND to TRUE if
+# all listed variables are TRUE
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(fjcontrib DEFAULT_MSG FJCONTRIB_INCLUDE_DIR FJCONTRIB_LIBRARY FJCONTRIB_CS_LIBRARY)
+
+mark_as_advanced(FJCONTRIB_FOUND FJCONTRIB_INCLUDE_DIR FJCONTRIB_LIBRARY FJCONTRIB_CS_LIBRARY)
+
+set(FJCONTRIB_INCLUDE_DIRS ${FJCONTRIB_INCLUDE_DIR})
+set(FJCONTRIB_LIBRARIES ${FJCONTRIB_LIBRARY})
+get_filename_component(FJCONTRIB_LIBRARY_DIRS ${FJCONTRIB_LIBRARY} PATH)
+
+if(NOT TARGET fjcontrib::fjcontrib)
+  if(FJCONTRIB_FOUND)
+    add_library(fjcontrib::fjcontrib IMPORTED INTERFACE)
+    target_include_directories(fjcontrib::fjcontrib SYSTEM INTERFACE ${FJCONTRIB_INCLUDE_DIR})
+    target_link_libraries(fjcontrib::fjcontrib INTERFACE ${FJCONTRIB_LIBRARY} FastJet::FastJet)
+    add_library(fjcontrib::ConstituentSubtractor IMPORTED INTERFACE)
+    target_include_directories(fjcontrib::ConstituentSubtractor SYSTEM INTERFACE ${FJCONTRIB_INCLUDE_DIR})
+    target_link_libraries(fjcontrib::ConstituentSubtractor INTERFACE ${FJCONTRIB_CS_LIBRARY} FastJet::FastJet)
+  endif()
+endif()
+
+
 gaudi_add_module(LoKiJets
     SOURCES
         src/LoKiFastJetMaker.cpp

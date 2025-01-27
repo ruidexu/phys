@@ -53,7 +53,7 @@ namespace LoKi {
   //
   class ConstituentSub : public virtual IConstituentSubtractor, public GaudiTool {
     public:
-      StatusCode makeJets( const IConstituentSubtractor::Input& rawJets, IConstituentSubtractor::Output& subtractedJets) const override;
+      StatusCode subJets( const IConstituentSubtractor::Input& rawJets, IConstituentSubtractor::Output& subtractedJets) override;
 
       // Constructor
       ConstituentSub( const std::string& type, const std::string& name, const IInterface* parent )
@@ -70,12 +70,14 @@ namespace LoKi {
           m_fix_pseudorapidity( false ),
           m_do_mass_subtraction( false ),
           m_scale_fourmomentum( false ),
-          m_suppress_logging( false ) {
+          m_suppress_logging( false ),
+          m_bge_rho( m_max_eta , m_bge_rho_grid_size ) {
 
         // Set the background estimator to calculate background desnity (rho)
         // Options: GridMedianBackgroundEstimator or JetMedianBackgroundEstimator
         //   -- use former by default (TODO: implement choice of estimator)
         //this->m_bge_rho = new fastjet::GridMedianBackgroundEstimator( this->m_max_eta, this->m_bge_rho_grid_size );
+        this->m_bge_rho= new fastjet::GridMedianBackgroundEstimator(this->m_max_eta, this->m_bge_rho_grid_size);
 
         // Initialize background subtractor
         this->m_subtractor = new fastjet::contrib::ConstituentSubtractor();
@@ -126,6 +128,7 @@ namespace LoKi {
 
       bool m_suppress_logging = false; // suppress standard output logging (useful for batch mode)
 
+
       // Check all of the parameters which should be initialized
       inline StatusCode checkParams() const {
         if ( m_max_distance < 0 || m_alpha < 0 || m_max_eta < 0 || m_bge_rho_grid_size < 0 ||
@@ -136,8 +139,9 @@ namespace LoKi {
       }
 
       //fastjet::GridMedianBackgroundEstimator* m_bge_rho = nullptr;  // Background estimator
-      fastjet::GridMedianBackgroundEstimator m_bge_rho = fastjet::GridMedianBackgroundEstimator( m_max_eta, m_bge_rho_grid_size );
+      //fastjet::GridMedianBackgroundEstimator m_bge_rho = fastjet::GridMedianBackgroundEstimator( m_max_eta, m_bge_rho_grid_size );
       fastjet::contrib::ConstituentSubtractor* m_subtractor = nullptr;  // Background subtractor object
+
 
       // Initialize the fastjet constituent subtractor using provided parameters
       StatusCode initializeSubtractor(
@@ -156,11 +160,12 @@ namespace LoKi {
       //|---> rdc <---| Not needed
       /*// Convert input object into a vector of fastjet::PseudoJet objects
       StatusCode prepareEvent(
-        const IJetMaker::Input& input, std::vector<fastjet::PseudoJet>& full_event) const;
+        const IJetMaker::Input& input, std::vector<fastjet::PseudoJet>& full_event) const;*/
       // Process output "jets" into output particles
-      StatusCode prepareOutput(
-        const IJetMaker::Input& input, const std::vector<fastjet::PseudoJet>& corrected_event,
-        IJetMaker::Jets& output) const;*/
+      /*StatusCode prepareOutput(
+        const std::vector<const std::vector<fastjet::PseudoJet>& corrected_event,
+        std::vector<fastjet::PseudoJet>& corrected_event output) const;
+      */
 
       //|---> rdc <---| Not needed
       // Function which converts LHCb::Particle into fastjet::PseudoJet

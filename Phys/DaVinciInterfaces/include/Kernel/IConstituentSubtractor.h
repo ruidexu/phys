@@ -29,7 +29,9 @@
 // ============================================================================
 // FastJet
 // ============================================================================
+#include "fastjet/JetDefinition.hh"
 #include "fastjet/PseudoJet.hh"
+
 // ============================================================================
 /** @class IConstituentSubtractor IConstituentSubtractor.h Kernel/IConstituentSubtractor.h
  *
@@ -73,7 +75,7 @@ struct GAUDI_API IConstituentSubtractor : extend_interfaces<IAlgTool> {
    *  @param subtracteJets  container of processed output pseudo-jets with subtracted constituent
    *  @return status code
    */
-  virtual StatusCode makeJets( const Input& rawJets, Output& subtractedJets ) const = 0;
+  virtual StatusCode subJets( const Input& rawJets, Output& subtractedJets ) = 0;
 };
 // ============================================================================
 // The END
