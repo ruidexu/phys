@@ -32,6 +32,7 @@ lhcb_add_subdirectories(
     Phys/DaVinciInterfaces
     Phys/DecayTreeTuple
     Phys/JetAccessories
+    Phys/JetTagging
     Phys/LoKiJets
     Phys/ParticleCombiners
     # -- end: list of subdirectories --

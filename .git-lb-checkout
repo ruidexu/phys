@@ -13,3 +13,6 @@
 [lb-checkout "Phys.Phys/ParticleCombiners"]
 	base = 82e9d7d639ec8ef23b02613d297c4f62156ee2ae
 	imported = 7fb2338070531a71ea59959f6612560e449db63b
+[lb-checkout "Phys.Phys/JetTagging"]
+	base = ae30ad335c5e0b0a07eb8955029073817a1f380d
+	imported = 39728fe376f3c02e2606254dd30da2f798f0a117
