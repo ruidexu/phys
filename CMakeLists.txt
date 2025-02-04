@@ -33,6 +33,7 @@ lhcb_add_subdirectories(
     Phys/DecayTreeTuple
     Phys/JetAccessories
     Phys/LoKiJets
+    Phys/ParticleCombiners
     # -- end: list of subdirectories --
 )
 
