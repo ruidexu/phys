@@ -7,3 +7,6 @@
 [lb-checkout "Phys.Phys/LoKiJets"]
 	base = d0c356273a892aa5cd6536ed0a42ba95197629df
 	imported = 39728fe376f3c02e2606254dd30da2f798f0a117
+[lb-checkout "Analysis.Phys/DecayTreeTuple"]
+	base = 0617a008efeaf006cd713597c7443ca5386fa524
+	imported = 0ab79ab694d65e46d5d93797470589b70e3e4639

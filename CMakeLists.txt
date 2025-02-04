@@ -30,6 +30,7 @@ set(GAUDI_PREFER_LOCAL_TARGETS TRUE)
 lhcb_add_subdirectories(
     # -- begin: list of subdirectories --
     Phys/DaVinciInterfaces
+    Phys/DecayTreeTuple
     Phys/JetAccessories
     Phys/LoKiJets
     # -- end: list of subdirectories --
