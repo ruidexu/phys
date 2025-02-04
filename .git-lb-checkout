@@ -19,3 +19,6 @@
 [lb-checkout "Phys.Phys/CommonParticles"]
 	base = d324f1539482f8e73a1474210a980165d134ec66
 	imported = 39728fe376f3c02e2606254dd30da2f798f0a117
+[lb-checkout "Analysis.Phys/DecayTreeTupleJets"]
+	base = ec1d8eaaee2e7006c4b1194a43fd6c904db5108c
+	imported = d1c91bd846e46edba3f1d2b142e453403e8c4cf5
