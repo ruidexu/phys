@@ -29,6 +29,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/cmake/DaVinciDevDependencies.cmake)
 set(GAUDI_PREFER_LOCAL_TARGETS TRUE)
 lhcb_add_subdirectories(
     # -- begin: list of subdirectories --
+    Phys/CommonParticles
     Phys/DaVinciInterfaces
     Phys/DecayTreeTuple
     Phys/JetAccessories
