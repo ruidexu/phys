@@ -138,6 +138,23 @@ private:
   /// fastjet::Strategy for more options.
   int m_fjStrategy;
 
+  // Constituent Subtractor property members.
+  // declare parameters of constituent subtractor
+  double m_max_distance;      // maximum allowed distance between particle i and ghost k
+  double m_alpha;             // free parameter for distance measure (exponent of pT)
+  double m_ghost_area;         // ghost "area" (A_g) to set density of ghosts (smaller is better but slower)
+  double m_max_eta;           // maximum pseudorapidity for input particles to the subtraction
+  double m_bge_rho_grid_size; // requested grid spacing for grid-median background estimator
+  double m_max_pt_correct;    // particles with pT above this value will not be corrected
+  // type of distance between particle i and ghost k
+  // Options: 0 (fastjet::contrib::ConstituentSubtractor::deltaR)
+  //          1 (fastjet::contrib::ConstituentSubtractor::angle)
+  int m_distance_type;
+  // Suppress standard output logging (useful for batch mode)
+  bool m_suppress_logging;
+  // enable constituent subtractor
+  bool m_cs_enable;
+
   // Jet energy correction members.
   static const int m_jecNPvs = 2;  ///< Number of n(PV) JEC bins.
   static const int m_jecNEta = 10; ///< Number of eta JEC bins.

@@ -51,6 +51,7 @@ HltJetBuilder::HltJetBuilder( const string& name, ISvcLocator* svc ) : DaVinciHi
   declareProperty( "JetEcShift", m_jetEcShift = 0, "Shift the jet energy correction by this (in JEC sigma)." );
 
   // Declare the FastJet properties.
+  // calling IJetmaker here
   declareProperty( "FjAlg", m_fjAlg = 2,
                    "FastJet finder to use: 0 kt, 1 cambridge, 2 anti-kt, ...; "
                    "see fasjet::JetAlgorithm for more options." );
@@ -60,6 +61,22 @@ HltJetBuilder::HltJetBuilder( const string& name, ISvcLocator* svc ) : DaVinciHi
   declareProperty( "FjStrategy", m_fjStrategy = 1,
                    "FastJet clustering strategy: 0 N3Dumb, 1 Best, 2 NlnN, ...; "
                    "see fastjet::Strategy for more options." );
+
+  //declare constituent properties
+  declareProperty( "enableConstituentSubtractor", m_cs_enable = false, "enable constituent subtractor" );
+  declareProperty( "MaxDistance", m_max_distance, "Maximum allowed distance between particle i and ghost k" );
+  declareProperty( "Alpha", m_alpha, "Free parameter for distance measure (exponent of pT)]" );
+  declareProperty( "MaxEta", m_max_eta, "Maximum pseudorapidity for input particles to the subtraction" );
+  declareProperty( "BgERhoGridSize", m_bge_rho_grid_size, "Requested grid spacing for"
+                   " grid-median background estimator" );
+  declareProperty( "MaxPtCorrect", m_max_pt_correct, "Particles with pT > MaxPtCorrect"
+                   " will not be corrected" );
+  declareProperty( "GhostArea", m_ghost_area, "Ghost 'area' (A_g) to set density of"
+                   " ghosts (smaller is better but slower)" );
+  declareProperty( "SuppressLogging", m_suppress_logging, "Suppress standard output" 
+                   " logging (useful for batch mode)" );
+  declareProperty( "DistanceType", m_distance_type, "Type of distance measure between"
+                   " particle i and ghost k. Options: 0 (deltaR), 1 (angle)" );
 }
 
 //=============================================================================
@@ -78,6 +95,18 @@ StatusCode HltJetBuilder::initialize() {
   fj->setProperty( "Strategy", m_fjStrategy ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   fj->setProperty( "Type", m_fjAlg ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   fj->setProperty( "Recombination", m_fjScheme ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+
+  //enable constituent subtractor
+  fj->setProperty( "enableConstituentSubtractor", m_cs_enable).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );;
+  //set constituent subtractor properties
+  fj->setProperty( "MaxDistance", m_max_distance ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  fj->setProperty( "Alpha", m_alpha ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  fj->setProperty( "MaxEta", m_max_eta ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  fj->setProperty( "BgERhoGridSize", m_bge_rho_grid_size ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  fj->setProperty( "MaxPtCorrect", m_max_pt_correct ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  fj->setProperty( "GhostArea", m_ghost_area ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  fj->setProperty( "SuppressLogging", m_suppress_logging ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  fj->setProperty( "DistanceType", m_distance_type ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
   // Retrieve the JEC histograms.
   if ( !m_jetEcPath.empty() ) {

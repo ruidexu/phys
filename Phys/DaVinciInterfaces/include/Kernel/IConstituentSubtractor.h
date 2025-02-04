@@ -8,8 +8,8 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-#ifndef DAVINCIKERNEL_IJETMAKER_H
-#define DAVINCIKERNEL_IJETMAKER_H 1
+#ifndef DAVINCIKERNEL_ICONSTITUENTSUBTRACTOR_H
+#define DAVINCIKERNEL_ICONSTITUENTSUBTRACTOR_H 1
 // ============================================================================
 // Include files
 // ============================================================================
@@ -53,7 +53,7 @@ struct GAUDI_API IConstituentSubtractor : extend_interfaces<IAlgTool> {
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // Only the output type and input type needs to be defined
-  // The peusdojet conversion is taken care off in the LoKiFastJetMaker.cpp/.h
+  // The peusdojet conversion is taken care off in the LoKiConstituentSubtractor.cpp/.h
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   /// the actual type of input data container
   typedef std::vector<fastjet::PseudoJet>& Input;
@@ -80,4 +80,4 @@ struct GAUDI_API IConstituentSubtractor : extend_interfaces<IAlgTool> {
 // ============================================================================
 // The END
 // ============================================================================
-#endif // DAVINCIKERNEL_IJETMAKER_H
+#endif // DAVINCIKERNEL_ICONSTITUENTSUBTRACTOR_H

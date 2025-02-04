@@ -37,6 +37,8 @@
 #include "fastjet/tools/GridMedianBackgroundEstimator.hh"
 #include "fastjet/contrib/ConstituentSubtractor.hh"
 
+
+
 namespace LoKi {
   /*
    * Constituent subtractor tool, as defined in 1403.3108
@@ -135,9 +137,10 @@ namespace LoKi {
         }
         return StatusCode::SUCCESS;
       }
-      
-      fastjet::GridMedianBackgroundEstimator m_bge_rho = fastjet::GridMedianBackgroundEstimator(m_max_eta, m_bge_rho_grid_size);  // Background estimator
-      //fastjet::GridMedianBackgroundEstimator m_bge_rho = fastjet::GridMedianBackgroundEstimator( m_max_eta, m_bge_rho_grid_size );
+
+      //fastjet::GridMedianBackgroundEstimator* m_bge_rho = nullptr;  // Background estimator
+      //fastjet::GridMedianBackgroundEstimator* m_bge_rho = new fastjet::GridMedianBackgroundEstimator(6,0.2);  // Background estimator
+      fastjet::GridMedianBackgroundEstimator m_bge_rho = fastjet::GridMedianBackgroundEstimator( m_max_eta, m_bge_rho_grid_size );
       fastjet::contrib::ConstituentSubtractor* m_subtractor = nullptr;  // Background subtractor object
 
       // Initialize the fastjet constituent subtractor using provided parameters

@@ -48,6 +48,19 @@ StatusCode LoKi::FastJetMaker::initialize() {
   svc<LoKi::ILoKiSvc>( "LoKiSvc", true );
   //
   if ( !m_showBanner ) fastjet::ClusterSequence::set_fastjet_banner_stream( 0 );
+
+  if ( !m_cs ) m_cs = tool<IConstituentSubtractor>( "LoKi::ConstituentSub", this );
+  if ( !m_cs ) return Error( "Could not retrieve ConstituentSubtractor." );
+  GaudiTool* cs = dynamic_cast<GaudiTool*>( m_cs );
+  cs->setProperty( "MaxDistance", m_max_distance ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  cs->setProperty( "Alpha", m_alpha ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  cs->setProperty( "MaxEta", m_max_eta ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  cs->setProperty( "BgERhoGridSize", m_bge_rho_grid_size ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  cs->setProperty( "MaxPtCorrect", m_max_pt_correct ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  cs->setProperty( "GhostArea", m_ghost_area ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  cs->setProperty( "SuppressLogging", m_suppress_logging ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  cs->setProperty( "DistanceType", m_distance_type ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+
   return sc;
 }
 // ============================================================================
@@ -124,10 +137,28 @@ StatusCode LoKi::FastJetMaker::makeJets( const IJetMaker::Input& input_, IJetMak
     return StatusCode::SUCCESS;
   }
   // Jets found
-  // rdc where jet clustering happens
   Jets_ jets;
 
-  fastjet::ClusterSequence* clusters = new fastjet::ClusterSequence( inputs, jetDef );
+  Jets_ subjets;
+
+  fastjet::ClusterSequence* clusters = nullptr;
+
+  // execute constituent subtractor
+  if (m_cs_enable){
+    subjets.reserve(inputs.size());
+    StatusCode sc = m_cs->subJets(inputs, subjets);
+    if (sc.isFailure()) {
+        return sc;
+    }
+    clusters = new fastjet::ClusterSequence( subjets, jetDef );
+  }
+  else
+  {
+    clusters = new fastjet::ClusterSequence( inputs, jetDef );
+  }
+  
+
+  
 
   switch ( m_sort ) {
   case 3:

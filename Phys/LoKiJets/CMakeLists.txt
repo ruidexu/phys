@@ -44,6 +44,45 @@ if(NOT TARGET fjcontrib::fjcontrib)
   endif()
 endif()
 
+# Find fastjet/tools/GridMedianBackgroundEstimator
+find_path(FASTJET_INCLUDE_DIR fastjet/tools/GridMedianBackgroundEstimator.hh
+          HINTS $ENV{FASTJET_ROOT_DIR}/include ${FASTJET_ROOT_DIR}/include)
+
+find_library(FASTJET_LIBRARY NAMES fastjet
+             HINTS $ENV{FASTJET_ROOT_DIR}/lib ${FASTJET_ROOT_DIR}/lib)
+
+find_library(FASTJET_TOOLS_LIBRARY NAMES fastjettools
+             HINTS $ENV{FASTJET_ROOT_DIR}/lib ${FASTJET_ROOT_DIR}/lib)
+
+# Check if required components are found
+if(NOT FASTJET_INCLUDE_DIR OR NOT FASTJET_LIBRARY OR NOT FASTJET_TOOLS_LIBRARY)
+    message(FATAL_ERROR "FastJet or its tools library not found!")
+endif()
+
+# Include directories and link libraries
+#include_directories(${FASTJET_INCLUDE_DIR})
+#set(FASTJET_LIBRARIES ${FASTJET_LIBRARY} ${FASTJET_TOOLS_LIBRARY})
+
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(tools DEFAULT_MSG FASTJET_INCLUDE_DIR FASTJET_LIBRARY FASTJET_TOOLS_LIBRARY)
+
+mark_as_advanced(FASTJET_INCLUDE_DIR FASTJET_LIBRARY FASTJET_TOOLS_LIBRARY)
+
+set(FASTJET_INCLUDE_DIRS ${FASTJET_INCLUDE_DIR})
+set(FASTJET_LIBRARIES ${FASTJET_LIBRARY})
+get_filename_component(FASTJET_TOOLS_LIBRARIES ${FASTJET_TOOLS_LIBRARY} PATH)
+
+if(NOT TARGET tools::tools)
+  if(FJCONTRIB_FOUND)
+    add_library(tools::tools IMPORTED INTERFACE)
+    target_include_directories(tools::tools SYSTEM INTERFACE ${FASTJET_INCLUDE_DIR})
+    target_link_libraries(tools::tools INTERFACE ${FASTJET_LIBRARY} FastJet::FastJet)
+    add_library(tools::GridMedianBackgroundEstimator IMPORTED INTERFACE)
+    target_include_directories(tools::GridMedianBackgroundEstimator SYSTEM INTERFACE ${FASTJET_INCLUDE_DIR})
+    target_link_libraries(tools::GridMedianBackgroundEstimator INTERFACE ${FASTJET_TOOLS_LIBRARY} FastJet::FastJet)
+  endif()
+endif()
+
 
 gaudi_add_module(LoKiJets
     SOURCES
@@ -61,6 +100,8 @@ gaudi_add_module(LoKiJets
         AIDA::aida
         Boost::headers
         FastJet::FastJet
+        tools::tools
+        tools::GridMedianBackgroundEstimator
         fjcontrib::fjcontrib
         fjcontrib::ConstituentSubtractor
         Gaudi::GaudiAlgLib
@@ -79,5 +120,15 @@ gaudi_add_module(LoKiJets
         ROOT::Hist
         ROOT::MathCore
 )
+
+find_path(FASTJET_INCLUDE_DIR fastjet/tools/GridMedianBackgroundEstimator.hh
+          HINTS $ENV{FASTJET_ROOT_DIR}/include ${FASTJET_ROOT_DIR}/include)
+
+find_library(FASTJET_LIBRARY NAMES fastjet
+             HINTS $ENV{FASTJET_ROOT_DIR}/lib ${FASTJET_ROOT_DIR}/lib)
+
+if(NOT FASTJET_INCLUDE_DIR OR NOT FASTJET_LIBRARY)
+    message(FATAL_ERROR "FastJet library or include directory not found.")
+endif()
 
 gaudi_install(PYTHON)

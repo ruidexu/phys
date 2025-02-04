@@ -21,6 +21,7 @@
 // ============================================================================
 // DaVinci Kernel
 // ============================================================================
+#include "Kernel/IConstituentSubtractor.h"
 #include "Kernel/IJetMaker.h"
 #include "Kernel/IParticleCombiner.h"
 // ============================================================================
@@ -115,6 +116,14 @@ namespace LoKi {
      */
     FastJetMaker( const std::string& type, const std::string& name, const IInterface* parent )
         : GaudiTool( type, name, parent )
+        , m_max_distance( 0.3 )
+        , m_alpha( 1 )
+        , m_ghost_area( 0.01 )
+        , m_max_eta( 6 )
+        , m_bge_rho_grid_size( 0.2 )
+        , m_max_pt_correct( 5 )
+        , m_distance_type( 0 )
+        , m_suppress_logging( false )
         //
         , m_jetID( 98 )
         //
@@ -129,7 +138,8 @@ namespace LoKi {
         , m_showBanner( false )
         //
         , m_combinerName( "MomentumCombiner" )
-        , m_combiner( 0 ) {
+        , m_combiner( 0 )  
+        , m_cs_enable( false ){
       //
       declareInterface<IJetMaker>( this );
       //
@@ -145,6 +155,17 @@ namespace LoKi {
       declareProperty( "ShowBanner", m_showBanner = false, "Print the FastJet banner if true." );
       // define momentum combiner
       declareProperty( "ParticleCombiner", m_combinerName );
+
+      //constituent subtractor properties
+      declareProperty( "enableConstituentSubtractor", m_cs_enable = false, "enable constituent subtractor" );
+      declareProperty( "MaxDistance", m_max_distance, "Maximum allowed distance between particle i and ghost k" );
+      declareProperty( "Alpha", m_alpha, "Free parameter for distance measure (exponent of pT)]" );
+      declareProperty( "MaxEta", m_max_eta, "Maximum pseudorapidity for input particles to the subtraction" );
+      declareProperty( "BgERhoGridSize", m_bge_rho_grid_size, "Requested grid spacing for grid-median background estimator" );
+      declareProperty( "MaxPtCorrect", m_max_pt_correct, "Particles with pT > MaxPtCorrect will not be corrected" );
+      declareProperty( "GhostArea", m_ghost_area, "Ghost 'area' (A_g) to set density of ghosts (smaller is better but slower)" );
+      declareProperty( "SuppressLogging", m_suppress_logging, "Suppress standard output logging (useful for batch mode)" );
+      declareProperty( "DistanceType", m_distance_type, "Type of distance measure between particle i and ghost k. Options: 0 (deltaR), 1 (angle)" );
     }
     /// destructor
     virtual ~FastJetMaker() {}
@@ -260,6 +281,24 @@ namespace LoKi {
     // the assignement operator is disabled
     FastJetMaker& operator=( const FastJetMaker& );
 
+    //declare parameters of constituent subtractor
+    double m_max_distance = -1;      // maximum allowed distance between particle i and ghost k
+    double m_alpha = -1;             // free parameter for distance measure (exponent of pT)
+    double m_ghost_area = 0;         // ghost "area" (A_g) to set density of ghosts (smaller is better but slower)
+    double m_max_eta = -1;           // maximum pseudorapidity for input particles to the subtraction
+    double m_bge_rho_grid_size = -1; // requested grid spacing for grid-median background estimator
+    double m_max_pt_correct = -1;    // particles with pT above this value will not be corrected
+    // type of distance between particle i and ghost k
+    // Options: 0 (fastjet::contrib::ConstituentSubtractor::deltaR)
+    //          1 (fastjet::contrib::ConstituentSubtractor::angle)
+    int m_distance_type = -1;
+    bool m_suppress_logging = false;
+
+    
+    //constituent subtractor related declarations
+    //Declare constituent subtractor interface
+    IConstituentSubtractor* m_cs; 
+
   protected:
     // proposed jet ID
     int m_jetID; ///< proposed jet ID
@@ -282,6 +321,8 @@ namespace LoKi {
     // combiner
     std::string                m_combinerName;
     mutable IParticleCombiner* m_combiner; ///< combiner to be used
+    // enable constituent subtractor
+    bool m_cs_enable;
   };
   // ==========================================================================
   typedef fastjet::PseudoJet Jet;
