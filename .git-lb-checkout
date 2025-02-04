@@ -8,7 +8,7 @@
 	base = d0c356273a892aa5cd6536ed0a42ba95197629df
 	imported = 39728fe376f3c02e2606254dd30da2f798f0a117
 [lb-checkout "Analysis.Phys/DecayTreeTuple"]
-	base = 0838d94ad6a1c4b018d0928f22111ed087505374
+	base = 4e19f1f0b99707c2ce137d2f5dcde0c13eea919b
 	imported = d1c91bd846e46edba3f1d2b142e453403e8c4cf5
 [lb-checkout "Phys.Phys/ParticleCombiners"]
 	base = 82e9d7d639ec8ef23b02613d297c4f62156ee2ae
