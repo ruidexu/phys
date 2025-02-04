@@ -33,7 +33,6 @@ gaudi_add_module(DecayTreeTuple
         src/TupleToolIsolationTwoBody.cpp
         src/TupleToolKinematic.cpp
         src/TupleToolMassHypo.cpp
-	    src/TupleToolMultiplicity.cpp
         src/TupleToolNeutrinoReco.cpp
         src/TupleToolP2VV.cpp
         src/TupleToolParticleReFit.cpp
@@ -63,8 +62,6 @@ gaudi_add_module(DecayTreeTuple
         LHCb::DAQEventLib
         LHCb::DigiEventLib
         LHCb::GenEvent
-        LHCb::HltDAQLib
-        LHCb::HltEvent
         LHCb::LHCbKernel
         LHCb::LoKiCoreLib
         LHCb::MCAssociatorsLib
