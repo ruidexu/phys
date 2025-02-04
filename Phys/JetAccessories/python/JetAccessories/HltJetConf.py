@@ -264,7 +264,8 @@ class HltJetBuilderConf(object):
             'JetSort': 2,
             'JetInfo': True,
             'JetEcPath': "JEC1405",
-            'JetEcShift': 0.0
+            'JetEcShift': 0.0,
+            'enableConstituentSubtractor': True
         }
 
         self.params.update(**kwargs)
