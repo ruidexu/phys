@@ -16,20 +16,26 @@
  *  @date   
  */
 
-#ifndef LOKIBACKGROUNDSUB_H
-#define LOKIBACKGROUNDSUB_H 1
-
-// Gaudi
+#ifndef LOKICONSTITUENTSUB_H
+#define LOKICONSTITUENTSUB_H 1
+// ============================================================================
+// Include files
+// ============================================================================
+// from Gaudi
+// ============================================================================
 #include "GaudiAlg/GaudiTool.h"  // inherit properties from GaudiTool
-
-// DaVinci kernel
+// ============================================================================
+// DaVinci Kernel
+// ============================================================================
 #include "Kernel/IConstituentSubtractor.h"  // create PseudoJet object for each "particle"
-
+// ============================================================================
 // LoKi
+// ============================================================================
 #include "LoKi/ILoKiSvc.h"  // for initializing class
 #include "LoKi/Geometry.h"  // for LoKi::Point3D
-
-// Fastjet
+// ============================================================================
+// FastJet
+// ============================================================================
 #include "fastjet/ClusterSequence.hh"
 #include "fastjet/Selector.hh"
 //#include "fastjet/tools/BackgroundEstimatorBase.hh"
@@ -55,7 +61,7 @@ namespace LoKi {
   //
   class ConstituentSub : public virtual IConstituentSubtractor, public GaudiTool {
     public:
-      StatusCode subJets( const IConstituentSubtractor::Input& rawJets, IConstituentSubtractor::Output& subtractedJets) override;
+      StatusCode subJets( const IConstituentSubtractor::Input& rawJets, IConstituentSubtractor::Output& subtractedJets) const override;
 
       // Constructor
       ConstituentSub( const std::string& type, const std::string& name, const IInterface* parent )
@@ -118,7 +124,7 @@ namespace LoKi {
       // type of distance between particle i and ghost k
       // Options: 0 (fastjet::contrib::ConstituentSubtractor::deltaR)
       //          1 (fastjet::contrib::ConstituentSubtractor::angle)
-      int m_distance_type = -1;
+      int m_distance_type = 0;
 
       // mass handling settings
       bool m_keep_original_masses = false;
@@ -140,7 +146,7 @@ namespace LoKi {
 
       //fastjet::GridMedianBackgroundEstimator* m_bge_rho = nullptr;  // Background estimator
       //fastjet::GridMedianBackgroundEstimator* m_bge_rho = new fastjet::GridMedianBackgroundEstimator(6,0.2);  // Background estimator
-      fastjet::GridMedianBackgroundEstimator m_bge_rho = fastjet::GridMedianBackgroundEstimator( m_max_eta, m_bge_rho_grid_size );
+      mutable fastjet::GridMedianBackgroundEstimator m_bge_rho = fastjet::GridMedianBackgroundEstimator( m_max_eta, m_bge_rho_grid_size );
       fastjet::contrib::ConstituentSubtractor* m_subtractor = nullptr;  // Background subtractor object
 
       // Initialize the fastjet constituent subtractor using provided parameters

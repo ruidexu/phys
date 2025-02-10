@@ -64,18 +64,18 @@ HltJetBuilder::HltJetBuilder( const string& name, ISvcLocator* svc ) : DaVinciHi
 
   //declare constituent properties
   declareProperty( "enableConstituentSubtractor", m_cs_enable = false, "enable constituent subtractor" );
-  declareProperty( "MaxDistance", m_max_distance, "Maximum allowed distance between particle i and ghost k" );
-  declareProperty( "Alpha", m_alpha, "Free parameter for distance measure (exponent of pT)]" );
-  declareProperty( "MaxEta", m_max_eta, "Maximum pseudorapidity for input particles to the subtraction" );
-  declareProperty( "BgERhoGridSize", m_bge_rho_grid_size, "Requested grid spacing for"
+  declareProperty( "MaxDistance", m_max_distance = 0.3, "Maximum allowed distance between particle i and ghost k" );
+  declareProperty( "Alpha", m_alpha = 1, "Free parameter for distance measure (exponent of pT)]" );
+  declareProperty( "MaxEta", m_max_eta = 6, "Maximum pseudorapidity for input particles to the subtraction" );
+  declareProperty( "BgERhoGridSize", m_bge_rho_grid_size = 0.2, "Requested grid spacing for"
                    " grid-median background estimator" );
-  declareProperty( "MaxPtCorrect", m_max_pt_correct, "Particles with pT > MaxPtCorrect"
+  declareProperty( "MaxPtCorrect", m_max_pt_correct = 5, "Particles with pT > MaxPtCorrect"
                    " will not be corrected" );
-  declareProperty( "GhostArea", m_ghost_area, "Ghost 'area' (A_g) to set density of"
+  declareProperty( "GhostArea", m_ghost_area = 0.01, "Ghost 'area' (A_g) to set density of"
                    " ghosts (smaller is better but slower)" );
-  declareProperty( "SuppressLogging", m_suppress_logging, "Suppress standard output" 
+  declareProperty( "SuppressLogging", m_suppress_logging = false, "Suppress standard output" 
                    " logging (useful for batch mode)" );
-  declareProperty( "DistanceType", m_distance_type, "Type of distance measure between"
+  declareProperty( "DistanceType", m_distance_type = 0, "Type of distance measure between"
                    " particle i and ghost k. Options: 0 (deltaR), 1 (angle)" );
 }
 

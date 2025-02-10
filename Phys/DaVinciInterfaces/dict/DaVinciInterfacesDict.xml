@@ -18,6 +18,7 @@
   <class name = "IChangePIDTool"/>
   <class name = "ICheckOverlap"/>
   <class name = "ICheckSelResults"/>
+  <class name = "IConstituentSubtractor"/>
   <class name = "IExtraInfoTool"/>
   <class name = "IDecayFinder"/>
   <class name = "IDecodeSimpleDecayString"/>

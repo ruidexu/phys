@@ -43,11 +43,6 @@ struct GAUDI_API IJetMaker : extend_interfaces<IAlgTool> {
   /// interface machinery
   DeclareInterfaceID( IJetMaker, 2, 0 );
   // ==========================================================================
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // Only the output type and input type needs to be defined
-  // The peusdojet conversion is taken care off in the LoKiFastJetMaker.cpp/.h
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   /// the actual type of input data container
   typedef LHCb::Particle::ConstVector Input;
   /// the actual type of output container of jets

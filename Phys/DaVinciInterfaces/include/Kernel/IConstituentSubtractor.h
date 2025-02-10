@@ -8,6 +8,7 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
+// ============================================================================
 #ifndef DAVINCIKERNEL_ICONSTITUENTSUBTRACTOR_H
 #define DAVINCIKERNEL_ICONSTITUENTSUBTRACTOR_H 1
 // ============================================================================
@@ -48,7 +49,7 @@
 struct GAUDI_API IConstituentSubtractor : extend_interfaces<IAlgTool> {
   // ==========================================================================
   /// interface machinery
-  DeclareInterfaceID( IConstituentSubtractor, 1, 0 );
+  DeclareInterfaceID( IConstituentSubtractor, 2, 0 );
   // ==========================================================================
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -75,7 +76,7 @@ struct GAUDI_API IConstituentSubtractor : extend_interfaces<IAlgTool> {
    *  @param subtracteJets  container of processed output pseudo-jets with subtracted constituent
    *  @return status code
    */
-  virtual StatusCode subJets( const Input& rawJets, Output& subtractedJets ) = 0;
+  virtual StatusCode subJets( const Input& rawJets, Output& subtractedJets ) const = 0;
 };
 // ============================================================================
 // The END

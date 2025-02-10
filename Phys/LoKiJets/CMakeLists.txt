@@ -95,7 +95,7 @@ gaudi_add_module(LoKiJets
         src/LoKiSeedConeJetMaker.cpp
         src/LoKiSeedFinder.cpp
         src/LoKiVVSeedFinder.cpp
-        src/LoKiConstituentSubtractor.cpp
+        src/LoKiConstituentSub.cpp
     LINK
         AIDA::aida
         Boost::headers

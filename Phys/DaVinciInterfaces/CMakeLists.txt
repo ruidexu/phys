@@ -25,8 +25,8 @@ gaudi_add_library(DaVinciInterfacesLib
             LHCb::PhysEvent
             LHCb::RecEvent
             LHCb::RelationsLib
-            Phys::DaVinciTypesLib 
-            FastJet::FastJet       
+            Phys::DaVinciTypesLib    
+            FastJet::FastJet        
         PRIVATE
             Gaudi::GaudiAlgLib
 )

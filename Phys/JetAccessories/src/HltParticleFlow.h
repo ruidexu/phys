@@ -119,10 +119,11 @@ using namespace LHCb;
  * @author Victor Coco, Cedric Potterat, and Philip Ilten
  * @date   2016-02-02
  */
-class HltParticleFlow : public GaudiHistoAlg {
+class HltParticleFlow : public GaudiHistoAlg
+{
 public:
   /// Constructor.
-  HltParticleFlow( const string& name, ISvcLocator* svc );
+  HltParticleFlow(const string &name, ISvcLocator *svc);
   StatusCode initialize() override; ///< Initialize.
   StatusCode execute() override;    ///< Execute.
   StatusCode finalize() override;   ///< Finalize.
@@ -133,25 +134,26 @@ private:
    *
    * Used to parse the input lists passed via #m_inLocs.
    */
-  class Input {
+  class Input
+  {
   public:
     /// Constructor.
-    Input( const unsigned int* idx = 0, const vector<string>* prp = 0, const IParticlePropertySvc* svc = 0 );
+    Input(const unsigned int *idx = 0, const vector<string> *prp = 0, const IParticlePropertySvc *svc = 0);
     /// Print the input configuration to #out.
-    inline void print( MsgStream& msg, bool idx = true );
+    inline void print(MsgStream &msg, bool idx = true);
 
     // Members.
-    string       warn;  ///< Any warnings that may have been generated.
-    string       name;  ///< The class name of objects from this input.
-    string       type;  ///< The object type for this input.
-    string       loc;   ///< The TES location for this input.
-    bool         valid; ///< Flag if input is valid.
-    bool         ban;   ///< Flag if objects from this input should be banned.
-    bool         dtrs;  ///< Flag if daughters from Particle should be written.
-    bool         ecal;  ///< Flag if ECAL/HCAL map for IClusTrTable2D.
+    string warn;        ///< Any warnings that may have been generated.
+    string name;        ///< The class name of objects from this input.
+    string type;        ///< The object type for this input.
+    string loc;         ///< The TES location for this input.
+    bool valid;         ///< Flag if input is valid.
+    bool ban;           ///< Flag if objects from this input should be banned.
+    bool dtrs;          ///< Flag if daughters from Particle should be written.
+    bool ecal;          ///< Flag if ECAL/HCAL map for IClusTrTable2D.
     unsigned int index; ///< Index for this input.
-    int          pid;   ///< PDG ID to assign neutral or positive Particles.
-    double       m;     ///< Mass to assign Particles.
+    int pid;            ///< PDG ID to assign neutral or positive Particles.
+    double m;           ///< Mass to assign Particles.
   };
 
   /**
@@ -163,15 +165,16 @@ private:
    * SuperCluster less the expected energy deposition from all
    * Particles in the SuperCluster.
    */
-  class SuperCluster {
+  class SuperCluster
+  {
   public:
     /// Constructor.
     SuperCluster();
 
     // Members.
-    bool                 used;       ///< Flag if used.
-    bool                 ecal, hcal; ///< Flags whether contains ECAL or HCAL energy.
-    Gaudi::LorentzVector vec;        ///< Energy weighted position and energy vector.
+    bool used;                ///< Flag if used.
+    bool ecal, hcal;          ///< Flags whether contains ECAL or HCAL energy.
+    Gaudi::LorentzVector vec; ///< Energy weighted position and energy vector.
     ///< Pointer to updated version of this SuperCluster.
     shared_ptr<SuperCluster> spr;
   };
@@ -181,15 +184,24 @@ private:
   // Add an object to the PF output Particles.
   /// Add Objects from #in to the PF output Particles.
   template <class Object>
-  bool add( const vector<Input>* ins, vector<Input>::iterator& in, const unsigned int& idx ) {
-    if ( !ins || in == ins->end() || idx != in->index ) return false;
-    m_inNow = &( *in );
-    if ( exist<typename Gaudi::Range_<vector<const Object*>>>( in->loc ) ) {
-      Gaudi::Range_<vector<const Object*>> objs = get<typename Gaudi::Range_<vector<const Object*>>>( in->loc );
-      for ( typename Gaudi::Range_<vector<const Object*>>::iterator obj = objs.begin(); obj != objs.end(); ++obj )
-        add( *obj, *in );
-    } else {
-      if ( msgLevel( MSG::DEBUG ) ) {
+  bool add(const vector<Input> *ins, vector<Input>::iterator &in, const unsigned int &idx)
+  {
+    if (!ins || in == ins->end() || idx != in->index)
+      return false;
+    m_inNow = &(*in);
+
+    if (exist<typename Gaudi::Range_<vector<const Object *>>>(in->loc))
+    {
+      Gaudi::Range_<vector<const Object *>> objs = get<typename Gaudi::Range_<vector<const Object *>>>(in->loc);
+      for (typename Gaudi::Range_<vector<const Object *>>::iterator obj = objs.begin(); obj != objs.end(); ++obj)
+      {
+        add(*obj, *in);
+      }
+    }
+    else
+    {
+      if (msgLevel(MSG::DEBUG))
+      {
         debug() << "add(): Could not retrieve " << in->name << "s from " << in->loc << endmsg;
       }
     }
@@ -197,64 +209,68 @@ private:
     return true;
   }
   /// Add a Particle to the PF output Particles.
-  void add( const Particle* prt, const Input& in );
+  void add(const Particle *prt, const Input &in);
   /// Add a ProtoParticle to the PF output Particles.
-  void add( const ProtoParticle* pro, const Input& in );
+  void add(const ProtoParticle *pro, const Input &in);
   /// Add a Track to the PF output Particles.
-  void add( const Track* trk, const Input& in );
+  void add(const Track *trk, const Input &in);
   /// Add a CaloCluster to the PF output Particles.
-  void add( const CaloCluster* cal, const Input& in );
+  void add(const CaloCluster *cal, const Input &in);
 
   // Create a Particle from an object to use in the PF output Particles.
   /// Create a Particle from a Particle.
-  Particle* create( const Particle* prt );
+  Particle *create(const Particle *prt);
   /// Create a Particle from a ProtoParticle.
-  Particle* create( const ProtoParticle* pro, const int& id, const double& m );
+  Particle *create(const ProtoParticle *pro, const int &id, const double &m);
   /// Create a Particle from a Track.
-  Particle* create( const Track* trk, const int& id, const double& m );
+  Particle *create(const Track *trk, const int &id, const double &m);
   /// Create a Particle from a CaloCluster.
-  Particle* create( const CaloCluster* cal, const int& id, const double& m );
+  Particle *create(const CaloCluster *cal, const int &id, const double &m);
   /// Create a Particle from a SuperCluster.
-  Particle* create( const SuperClusterPtr& spr );
+  Particle *create(const SuperClusterPtr &spr);
 
   // Mark the Tracks and/or CaloClusters of an object as used.
   /// Mark the Tracks and CaloClusters of a ProtoParticle as used. If
   /// #prt is passed, neutral recovery is performed.
-  void use( const ProtoParticle* pro, const Particle* prt );
+  void use(const ProtoParticle *pro, const Particle *prt);
   /// Mark a Track and its matched CaloClusters as used. If #prt is
   /// passed, neutral recovery is performed.
-  void use( const Track* trk, const Particle* prt );
+  void use(const Track *trk, const Particle *prt);
   /// Match CaloClusters to a Track, for a given calorimeter with
   /// relations #trksCals and matching criteria #chi2Max. If #best,
   /// only the first CaloCluster is used. Once matched, the
   /// CaloClusters are marked as used. If #spr and #vec are passed,
   /// neutral recovery is performed.
-  void use( const Track* trk, Gaudi::LorentzVector& vec, SuperClusterPtr& spr, bool* calo,
-            const Calo2Track::ITrClusTable* trksCals, const bool& best, const double& chi2Max );
+  void use(const Track *trk, Gaudi::LorentzVector &vec, SuperClusterPtr &spr, bool *calo,
+           const Calo2Track::ITrClusTable *trksCals, const bool &best, const double &chi2Max);
   /// Mark a CaloCluster as used. If #spr is passed neutral recovery
   /// is performed.
-  void use( const CaloCluster* cal, SuperClusterPtr spr );
+  void use(const CaloCluster *cal, SuperClusterPtr spr);
 
   // Check if the Tracks and/or CaloClusters of an object are used.
   /// Check if a ProtoParticle is used.
-  inline bool used( const ProtoParticle* pro );
+  inline bool used(const ProtoParticle *pro);
   /// Check if a Track is used.
-  inline bool used( const Track* trk );
+  inline bool used(const Track *trk);
   /// Check if a CaloCluster is used.
-  inline bool used( const CaloCluster* cal );
+  inline bool used(const CaloCluster *cal);
 
   // Additional methods.
   /// Sum a Gaudi::LorentzVector and a CaloCluster.
-  inline void sum( Gaudi::LorentzVector& vec, const CaloCluster* cal );
+  inline void sum(Gaudi::LorentzVector &vec, const CaloCluster *cal);
   /// Relate a Particle with a Track to a RecVertex.
-  inline void relate( const Particle* prt );
+  inline void relate(const Particle *prt);
   /// Retrieve an Object #obj given Input #in.
   template <class Object>
-  bool retrieve( Object& obj, const Input& in ) {
-    if ( exist<Object>( in.loc ) ) {
-      obj = get<Object>( in.loc );
+  bool retrieve(Object &obj, const Input &in)
+  {
+    if (exist<Object>(in.loc))
+    {
+      obj = get<Object>(in.loc);
       return true;
-    } else {
+    }
+    else
+    {
       obj = 0;
       warning() << "retrieve(): Could not retrieve " << in.name << "s from " << in.loc << endmsg;
       return false;
@@ -268,6 +284,8 @@ private:
   string m_outLoc;
   /// PF output prefix for non-Particle locations (determined from m_outLoc).
   string m_outPre;
+
+  string m_HFlocation;
 
   // ProtoParticle property members.
   /// Particle names to use when assigning the 'best' PID to ProtoParticles.
@@ -293,6 +311,8 @@ private:
   double m_trkUpErrMax;
   /// Fix momentum for downstream Tracks with curvature / error below this.
   double m_trkDnErrMax;
+  // Option to choose between multiple candidates. 0 for random, 1 for highest pT.
+  int m_tiebreak;
 
   // Calorimeter property members.
   /// Flag to perform neutral recovery using expected calorimeter response.
@@ -327,41 +347,49 @@ private:
   string m_ecalHcalHadEStr;
 
   // Tool members.
-  IParticlePropertySvc* m_prtSvc; ///< Particle property service tool.
-  IParticle2State*      m_prtSta; ///< Particle to State conversion tool.
-  IRelatedPVFinder*     m_prtVrt; ///< Particle to RecVertex relation tool.
+  IParticlePropertySvc *m_prtSvc; ///< Particle property service tool.
+  IParticle2State *m_prtSta;      ///< Particle to State conversion tool.
+  IRelatedPVFinder *m_prtVrt;     ///< Particle to RecVertex relation tool.
 
   // Additional members (not properties).
-  VertexBase::ConstVector           m_vrts;         ///< Input RecVertex container.
-  Particles*                        m_prts;         ///< Output Particle container.
-  ProtoParticles*                   m_pros;         ///< Output ProtoParticle container.
-  CaloHypos*                        m_hyps;         ///< Output CaloHypo container.
-  CaloClusters*                     m_cals;         ///< Output CaloCluster container.
-  Particle2Vertex::WTable*          m_prtsVrts;     ///< Output Particle to RecVertex table.
-  vector<double>                    m_proBestMs;    ///< Masses for "best" PID ProtoParticle.
-  vector<int>                       m_proBestPids;  ///< PIDs for "best" PID ProtoParticle.
-  vector<Input>                     m_inPrts;       ///< Vector of Particle inputs.
-  vector<Input>                     m_inPros;       ///< Vector of ProtoParticle inputs.
-  vector<Input>                     m_inTrks;       ///< Vector of Track inputs.
-  vector<Input>                     m_inCals;       ///< Vector of CaloCluster inputs.
-  Input                             m_inVrts;       ///< RecVertex input.
-  Input                             m_inEcalTrks;   ///< ECAL to Track map input.
-  Input                             m_inHcalTrks;   ///< HCAL to Track map input.
-  Input*                            m_inNow;        ///< Pointer to the current input.
-  const Calo2Track::IClusTrTable2D* m_ecalTrks;     ///< ECAL to Track map.
-  const Calo2Track::ITrClusTable*   m_trksEcal;     ///< Track to ECAL map.
-  const Calo2Track::IClusTrTable2D* m_hcalTrks;     ///< HCAL to Track map.
-  const Calo2Track::ITrClusTable*   m_trksHcal;     ///< Track to HCAL map.
-  TF1                               m_ecalElcE;     ///< ECAL energy electron response.
-  TF1                               m_ecalHadE;     ///< ECAL energy charged hadron response.
-  TF1                               m_hcalElcE;     ///< HCAL energy electron response.
-  TF1                               m_hcalHadE;     ///< HCAL energy charged hadron response.
-  TF1                               m_ecalHcalElcE; ///< ECAL + HCAL energy electron response.
-  TF1                               m_ecalHcalHadE; ///< ECAL + HCAL energy charged hadron response.
+  VertexBase::ConstVector m_vrts;               ///< Input RecVertex container.
+  Particles *m_prts;                            ///< Output Particle container.
+  ProtoParticles *m_pros;                       ///< Output ProtoParticle container.
+  CaloHypos *m_hyps;                            ///< Output CaloHypo container.
+  CaloClusters *m_cals;                         ///< Output CaloCluster container.
+  Particle2Vertex::WTable *m_prtsVrts;          ///< Output Particle to RecVertex table.
+  vector<double> m_proBestMs;                   ///< Masses for "best" PID ProtoParticle.
+  vector<int> m_proBestPids;                    ///< PIDs for "best" PID ProtoParticle.
+  vector<Input> m_inPrts;                       ///< Vector of Particle inputs.
+  vector<Input> m_inPros;                       ///< Vector of ProtoParticle inputs.
+  vector<Input> m_inTrks;                       ///< Vector of Track inputs.
+  vector<Input> m_inCals;                       ///< Vector of CaloCluster inputs.
+  Input m_inVrts;                               ///< RecVertex input.
+  Input m_inEcalTrks;                           ///< ECAL to Track map input.
+  Input m_inHcalTrks;                           ///< HCAL to Track map input.
+  Input *m_inNow;                               ///< Pointer to the current input.
+  const Calo2Track::IClusTrTable2D *m_ecalTrks; ///< ECAL to Track map.
+  const Calo2Track::ITrClusTable *m_trksEcal;   ///< Track to ECAL map.
+  const Calo2Track::IClusTrTable2D *m_hcalTrks; ///< HCAL to Track map.
+  const Calo2Track::ITrClusTable *m_trksHcal;   ///< Track to HCAL map.
+  TF1 m_ecalElcE;                               ///< ECAL energy electron response.
+  TF1 m_ecalHadE;                               ///< ECAL energy charged hadron response.
+  TF1 m_hcalElcE;                               ///< HCAL energy electron response.
+  TF1 m_hcalHadE;                               ///< HCAL energy charged hadron response.
+  TF1 m_ecalHcalElcE;                           ///< ECAL + HCAL energy electron response.
+  TF1 m_ecalHcalHadE;                           ///< ECAL + HCAL energy charged hadron response.
   /// Set of used Tracks.
-  unordered_set<const Track*> m_trks;
+  unordered_set<const Track *> m_trks;
   /// Map of used CaloClusters and associated SuperClusters.
-  unordered_map<const CaloCluster*, shared_ptr<SuperCluster>> m_calsSprs;
+  unordered_map<const CaloCluster *, shared_ptr<SuperCluster>> m_calsSprs;
+
+  struct sort_rule
+  {
+    inline bool operator()(const Particle *struct1, const Particle *struct2)
+    {
+      return (struct1->momentum().pt() > struct2->momentum().pt());
+    }
+  };
 };
 
 #endif // HLTPARTICLEFLOW_H

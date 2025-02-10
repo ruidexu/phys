@@ -253,6 +253,7 @@ StatusCode HighPtIsoLeptonAndTagPV::execute() {
     // get the Isolated and NoIso Leptons     //
     // check on the prompt leptons            //
     //----------------------------------------//
+    int isol = 0;
     if ( (int)LeptonsSel.size() > 0 ) {
 
       //----------------------------------------//
@@ -278,6 +279,7 @@ StatusCode HighPtIsoLeptonAndTagPV::execute() {
           IsoLept->insert( p_iso );
           IsoLeptJet->insert( P_Jet );
           table->relate( p_iso, P_Jet ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+          isol++;
           if ( msgLevel( MSG::DEBUG ) )
             debug() << "Ilept" << mv << "| ID:  " << p_iso->particleID().pid() << " | Pt: " << p_iso->pt()
                     << " | EJ over EL: " << P_jet.momentum().E() / p_iso->momentum().E() << endmsg;

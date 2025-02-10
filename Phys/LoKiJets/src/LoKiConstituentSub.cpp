@@ -16,7 +16,7 @@
  *  @date   
  */
 
-#include "LoKiConstituentSubtractor.h"
+#include "LoKiConstituentSub.h"
 
 // ===========================================================================
 // Standard initialization of the tool
@@ -141,7 +141,7 @@ StatusCode LoKi::ConstituentSub::initializeSubtractor(
 // ===========================================================================
 // Process input particles into background-subtracked output particles (as "jets")
 ///------>rdc<------ Made this function mutable, the set_partciles member is a non const function, cannot be called
-StatusCode LoKi::ConstituentSub::subJets( const IConstituentSubtractor::Input& rawJets, IConstituentSubtractor::Output& subtractedJets ) {
+StatusCode LoKi::ConstituentSub::subJets( const IConstituentSubtractor::Input& rawJets, IConstituentSubtractor::Output& subtractedJets ) const {
 
   // First process particles from event into a vector of fastjet::PseudoJet objects
   //std::vector<fastjet::PseudoJet> full_event;

@@ -177,8 +177,10 @@ StatusCode UpdateJetsWithVtx::execute() {
     }
 
     // Loop over vertices
+    int vertex_index = 0;
     for ( LHCb::Particles::const_iterator i_vert = myInput->begin(); myInput->end() != i_vert; ++i_vert ) {
-      IJets2Jets::Table::Range links = table->relations( *i_vert );
+      IJets2Jets::Table::Range links     = table->relations( *i_vert );
+      int                      jet_index = 0;
       // find the links to jet
       for ( IJets2Jets::Table::Range::const_iterator link = links.begin(); links.end() != link; ++link ) {
         const LHCb::Particle* theLinkedJet = ( *link ).to();
@@ -192,7 +194,9 @@ StatusCode UpdateJetsWithVtx::execute() {
             }
           }
         }
+        jet_index++;
       }
+      vertex_index++;
     }
 
     // LHCb::Particles* newJets = new LHCb::Particles();

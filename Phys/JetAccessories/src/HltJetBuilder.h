@@ -21,6 +21,7 @@
 
 // Jets.
 #include "Kernel/IJetMaker.h"
+#include "Kernel/IConstituentSubtractor.h"
 #include "Kernel/JetEnums.h"
 
 // Event.

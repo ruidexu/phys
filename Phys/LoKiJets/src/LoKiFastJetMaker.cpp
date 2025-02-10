@@ -48,18 +48,24 @@ StatusCode LoKi::FastJetMaker::initialize() {
   svc<LoKi::ILoKiSvc>( "LoKiSvc", true );
   //
   if ( !m_showBanner ) fastjet::ClusterSequence::set_fastjet_banner_stream( 0 );
+  if (m_cs_enable){
+    if ( !m_cs ) m_cs = tool<IConstituentSubtractor>( "LoKi::ConstituentSub", this );
+    if ( !m_cs ) return Error( "Could not retrieve ConstituentSubtractor." );
+    std::cout<<"1-------------->";
+    GaudiTool* cs = dynamic_cast<GaudiTool*>( m_cs );
+    std::cout<<"2-------------->";
+    
+    cs->setProperty( "MaxDistance", m_max_distance ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    cs->setProperty( "Alpha", m_alpha ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    cs->setProperty( "MaxEta", m_max_eta ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    cs->setProperty( "BgERhoGridSize", m_bge_rho_grid_size ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    cs->setProperty( "MaxPtCorrect", m_max_pt_correct ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    cs->setProperty( "GhostArea", m_ghost_area ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    cs->setProperty( "SuppressLogging", m_suppress_logging ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+    cs->setProperty( "DistanceType", m_distance_type ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
-  if ( !m_cs ) m_cs = tool<IConstituentSubtractor>( "LoKi::ConstituentSub", this );
-  if ( !m_cs ) return Error( "Could not retrieve ConstituentSubtractor." );
-  GaudiTool* cs = dynamic_cast<GaudiTool*>( m_cs );
-  cs->setProperty( "MaxDistance", m_max_distance ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
-  cs->setProperty( "Alpha", m_alpha ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
-  cs->setProperty( "MaxEta", m_max_eta ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
-  cs->setProperty( "BgERhoGridSize", m_bge_rho_grid_size ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
-  cs->setProperty( "MaxPtCorrect", m_max_pt_correct ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
-  cs->setProperty( "GhostArea", m_ghost_area ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
-  cs->setProperty( "SuppressLogging", m_suppress_logging ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
-  cs->setProperty( "DistanceType", m_distance_type ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  }
+  
 
   return sc;
 }
@@ -67,10 +73,6 @@ StatusCode LoKi::FastJetMaker::initialize() {
 // prepare the input information
 // ============================================================================
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// This sequence converts Particles into Pseudojets
-// Can be reused
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 fastjet::JetDefinition LoKi::FastJetMaker::prepare( const IJetMaker::Input&          input,
                                                     std::vector<fastjet::PseudoJet>& jets ) const {
   // input container of "particles"

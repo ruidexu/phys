@@ -29,6 +29,7 @@
 #include "Kernel/IChangePIDTool.h"
 #include "Kernel/ICheckOverlap.h"
 #include "Kernel/ICheckSelResults.h"
+#include "Kernel/IConstituentSubtractor.h"
 #include "Kernel/IDVAlgorithm.h"
 #include "Kernel/IDecayFinder.h"
 #include "Kernel/IDecayTreeFit.h"

@@ -24,6 +24,7 @@
 #include "Kernel/IConstituentSubtractor.h"
 #include "Kernel/IJetMaker.h"
 #include "Kernel/IParticleCombiner.h"
+#include "LoKiConstituentSub.h"
 // ============================================================================
 // Event
 // ============================================================================
@@ -282,16 +283,16 @@ namespace LoKi {
     FastJetMaker& operator=( const FastJetMaker& );
 
     //declare parameters of constituent subtractor
-    double m_max_distance = -1;      // maximum allowed distance between particle i and ghost k
-    double m_alpha = -1;             // free parameter for distance measure (exponent of pT)
-    double m_ghost_area = 0;         // ghost "area" (A_g) to set density of ghosts (smaller is better but slower)
-    double m_max_eta = -1;           // maximum pseudorapidity for input particles to the subtraction
-    double m_bge_rho_grid_size = -1; // requested grid spacing for grid-median background estimator
-    double m_max_pt_correct = -1;    // particles with pT above this value will not be corrected
+    double m_max_distance = 0.3;      // maximum allowed distance between particle i and ghost k
+    double m_alpha = 1;             // free parameter for distance measure (exponent of pT)
+    double m_ghost_area = 0.01;         // ghost "area" (A_g) to set density of ghosts (smaller is better but slower)
+    double m_max_eta = 6;           // maximum pseudorapidity for input particles to the subtraction
+    double m_bge_rho_grid_size = 0.2; // requested grid spacing for grid-median background estimator
+    double m_max_pt_correct = 5;    // particles with pT above this value will not be corrected
     // type of distance between particle i and ghost k
     // Options: 0 (fastjet::contrib::ConstituentSubtractor::deltaR)
     //          1 (fastjet::contrib::ConstituentSubtractor::angle)
-    int m_distance_type = -1;
+    int m_distance_type = 0;
     bool m_suppress_logging = false;
 
     
