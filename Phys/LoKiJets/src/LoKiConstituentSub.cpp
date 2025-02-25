@@ -17,6 +17,7 @@
  */
 
 #include "LoKiConstituentSub.h"
+#include "LoKi/ILoKiSvc.h"  // for initializing class
 
 // ===========================================================================
 // Standard initialization of the tool
@@ -61,7 +62,8 @@ StatusCode LoKi::ConstituentSub::initializeSubtractor(
   if (scale_fourmomentum)   { this->m_subtractor->set_scale_fourmomentum(); }
 
   // Include any desired selectors
-  fastjet::Selector sel_max_pt = fastjet::SelectorPtMax(this->m_max_pt_correct);
+  sel_max_pt = fastjet::SelectorPtMax(this->m_max_pt_correct);
+
   this->m_subtractor->set_particle_selector(&sel_max_pt);
 
   // Initialize subtractor and print helpful info (if desired)
@@ -141,7 +143,7 @@ StatusCode LoKi::ConstituentSub::initializeSubtractor(
 // ===========================================================================
 // Process input particles into background-subtracked output particles (as "jets")
 ///------>rdc<------ Made this function mutable, the set_partciles member is a non const function, cannot be called
-StatusCode LoKi::ConstituentSub::subJets( const IConstituentSubtractor::Input& rawJets, IConstituentSubtractor::Output& subtractedJets ) const {
+StatusCode LoKi::ConstituentSub::subJets( IConstituentSubtractor::Input const &rawJets, IConstituentSubtractor::Output &subtractedJets ) const {
 
   // First process particles from event into a vector of fastjet::PseudoJet objects
   //std::vector<fastjet::PseudoJet> full_event;
@@ -161,11 +163,12 @@ StatusCode LoKi::ConstituentSub::subJets( const IConstituentSubtractor::Input& r
 
   // Estimate the background density (rho) for this event
   this->m_bge_rho.set_particles(rawJets);
+  //std::cout<<"======================input: "<<rawJets.size()<<"============================="<<std::endl;
   std::vector<fastjet::PseudoJet> corrected_event = this->m_subtractor->subtract_event(rawJets);
-
+  //std::cout<<"======================output: "<<corrected_event.size()<<"============================="<<std::endl;
   // copy the corrected_event to subtracted Jets
   subtractedJets = corrected_event;
-
+  
   // Copy corrected event into the proper output object
   /*IConstituentSubtractor::Output output{};
   sc = this->prepareOutput(rawJets, corrected_event, output);

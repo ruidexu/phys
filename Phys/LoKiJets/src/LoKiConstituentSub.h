@@ -31,7 +31,6 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/ILoKiSvc.h"  // for initializing class
 #include "LoKi/Geometry.h"  // for LoKi::Point3D
 // ============================================================================
 // FastJet
@@ -61,7 +60,7 @@ namespace LoKi {
   //
   class ConstituentSub : public virtual IConstituentSubtractor, public GaudiTool {
     public:
-      StatusCode subJets( const IConstituentSubtractor::Input& rawJets, IConstituentSubtractor::Output& subtractedJets) const override;
+      StatusCode subJets( IConstituentSubtractor::Input const &rawJets, IConstituentSubtractor::Output& subtractedJets) const override;
 
       // Constructor
       ConstituentSub( const std::string& type, const std::string& name, const IInterface* parent )
@@ -70,8 +69,10 @@ namespace LoKi {
           m_max_distance( 0.3 ),
           m_alpha( 1 ),
           m_ghost_area( 0.01 ),
-          m_max_eta( 6 ),
-          m_bge_rho_grid_size( 0.2 ),
+          m_min_eta( 2 ),
+          m_max_eta( 5 ),
+          m_bge_rho_grid_size_rap( 0.2 ),
+          m_bge_rho_grid_size_azm( 0.2 ),
           m_max_pt_correct( 5 ),
           m_distance_type( 0 ),
           m_keep_original_masses( false ),
@@ -93,14 +94,16 @@ namespace LoKi {
         //if ( sc.isFailure() ) { return sc; }
 
         declareInterface<IConstituentSubtractor>( this );
-        declareProperty( "MaxDistance", m_max_distance, "Maximum allowed distance between particle i and ghost k" );
-        declareProperty( "Alpha", m_alpha, "Free parameter for distance measure (exponent of pT)]" );
-        declareProperty( "MaxEta", m_max_eta, "Maximum pseudorapidity for input particles to the subtraction" );
-        declareProperty( "BgERhoGridSize", m_bge_rho_grid_size, "Requested grid spacing for grid-median background estimator" );
-        declareProperty( "MaxPtCorrect", m_max_pt_correct, "Particles with pT > MaxPtCorrect will not be corrected" );
-        declareProperty( "GhostArea", m_ghost_area, "Ghost 'area' (A_g) to set density of ghosts (smaller is better but slower)" );
-        declareProperty( "SuppressLogging", m_suppress_logging, "Suppress standard output logging (useful for batch mode)" );
-        declareProperty( "DistanceType", m_distance_type, "Type of distance measure between particle i and ghost k. Options: 0 (deltaR), 1 (angle)" );
+        declareProperty( "CS_MaxDistance", m_max_distance, "Maximum allowed distance between particle i and ghost k" );
+        declareProperty( "CS_Alpha", m_alpha, "Free parameter for distance measure (exponent of pT)]" );
+        declareProperty( "CS_MinEta", m_min_eta, "Minimum pseudorapidity for input particles to the subtraction" );
+        declareProperty( "CS_MaxEta", m_max_eta, "Maximum pseudorapidity for input particles to the subtraction" );
+        declareProperty( "CS_BgERhoGridSize_rap", m_bge_rho_grid_size_rap, "Requested rapidity grid spacing for grid-median background estimator" );
+        declareProperty( "CS_BgERhoGridSize_azm", m_bge_rho_grid_size_azm, "Requested azimuthal grid spacing for grid-median background estimator" );
+        declareProperty( "CS_MaxPtCorrect", m_max_pt_correct, "Particles with pT > MaxPtCorrect will not be corrected" );
+        declareProperty( "CS_GhostArea", m_ghost_area, "Ghost 'area' (A_g) to set density of ghosts (smaller is better but slower)" );
+        declareProperty( "CS_SuppressLogging", m_suppress_logging, "Suppress standard output logging (useful for batch mode)" );
+        declareProperty( "CS_DistanceType", m_distance_type, "Type of distance measure between particle i and ghost k. Options: 0 (deltaR), 1 (angle)" );
       }
 
       // Destructor
@@ -114,31 +117,35 @@ namespace LoKi {
       StatusCode initialize() override;
 
     private:
-      double m_max_distance = -1;      // maximum allowed distance between particle i and ghost k
-      double m_alpha = -1;             // free parameter for distance measure (exponent of pT)
-      double m_ghost_area = 0;         // ghost "area" (A_g) to set density of ghosts (smaller is better but slower)
-      double m_max_eta = -1;           // maximum pseudorapidity for input particles to the subtraction
-      double m_bge_rho_grid_size = -1; // requested grid spacing for grid-median background estimator
-      double m_max_pt_correct = -1;    // particles with pT above this value will not be corrected
+      double m_max_distance;      // maximum allowed distance between particle i and ghost k
+      double m_alpha;             // free parameter for distance measure (exponent of pT)
+      double m_ghost_area;         // ghost "area" (A_g) to set density of ghosts (smaller is better but slower)
+      double m_min_eta;           // minimum pseudorapidity for input particles to the subtraction
+      double m_max_eta;           // maximum pseudorapidity for input particles to the subtraction
+      double m_bge_rho_grid_size_rap; // requested rapidity grid spacing for grid-median background estimator
+      double m_bge_rho_grid_size_azm; // requested azimuthal grid spacing for grid-median background estimator
+      double m_max_pt_correct;    // particles with pT above this value will not be corrected
 
       // type of distance between particle i and ghost k
       // Options: 0 (fastjet::contrib::ConstituentSubtractor::deltaR)
       //          1 (fastjet::contrib::ConstituentSubtractor::angle)
-      int m_distance_type = 0;
+      int m_distance_type;
 
       // mass handling settings
-      bool m_keep_original_masses = false;
-      bool m_fix_pseudorapidity = false;
-      bool m_do_mass_subtraction = false;
-      bool m_scale_fourmomentum = false;
+      bool m_keep_original_masses;
+      bool m_fix_pseudorapidity;
+      bool m_do_mass_subtraction;
+      bool m_scale_fourmomentum;
 
-      bool m_suppress_logging = false; // suppress standard output logging (useful for batch mode)
+      bool m_suppress_logging; // suppress standard output logging (useful for batch mode)
+
+      fastjet::Selector sel_max_pt;
 
 
       // Check all of the parameters which should be initialized
       inline StatusCode checkParams() const {
-        if ( m_max_distance < 0 || m_alpha < 0 || m_max_eta < 0 || m_bge_rho_grid_size < 0 ||
-             m_max_pt_correct < 0 || m_ghost_area <= 0 || m_distance_type <= 0 ) {
+        if ( m_max_distance < 0 || m_alpha < 0 || m_min_eta < 0 || m_max_eta < 0 || m_bge_rho_grid_size_rap < 0 ||
+             m_bge_rho_grid_size_azm < 0 ||m_max_pt_correct < 0 || m_ghost_area <= 0 || m_distance_type < 0 ) {
           return Error( "Invalid input parameters specified" );
         }
         return StatusCode::SUCCESS;
@@ -146,7 +153,8 @@ namespace LoKi {
 
       //fastjet::GridMedianBackgroundEstimator* m_bge_rho = nullptr;  // Background estimator
       //fastjet::GridMedianBackgroundEstimator* m_bge_rho = new fastjet::GridMedianBackgroundEstimator(6,0.2);  // Background estimator
-      mutable fastjet::GridMedianBackgroundEstimator m_bge_rho = fastjet::GridMedianBackgroundEstimator( m_max_eta, m_bge_rho_grid_size );
+      // look at GridMedianBackgroundEstimator and how does it look at max_eta.
+      mutable fastjet::GridMedianBackgroundEstimator m_bge_rho = fastjet::GridMedianBackgroundEstimator( m_min_eta, m_max_eta, m_bge_rho_grid_size_rap, m_bge_rho_grid_size_azm);
       fastjet::contrib::ConstituentSubtractor* m_subtractor = nullptr;  // Background subtractor object
 
       // Initialize the fastjet constituent subtractor using provided parameters
