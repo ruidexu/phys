@@ -54,11 +54,9 @@ StatusCode LoKi::FastJetMaker::initialize() {
   //
   if ( !m_cs ) m_cs = tool<IConstituentSubtractor>( "LoKi::ConstituentSub", this );
   if ( !m_cs ) return Error( "Could not retrieve ConstituentSubtractor." );
-  
+  //
   GaudiTool* cs = dynamic_cast<GaudiTool*>( m_cs );
-  std::cout<<"===========================>CS tool retrieved<===========================>"<< std::endl;
-  std::cout<< "===========================>"<<m_cs_enable<< "<===========================" << std::endl;
-  
+  //set properties for constituent subtractor
   cs->setProperty( "CS_MaxDistance", m_max_distance ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   cs->setProperty( "CS_Alpha", m_alpha ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
   cs->setProperty( "CS_MinEta", m_min_eta ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
@@ -141,25 +139,21 @@ StatusCode LoKi::FastJetMaker::makeJets( const IJetMaker::Input& input_, IJetMak
 
   fastjet::ClusterSequence* clusters = nullptr;
 
-  // execute constituent subtractor
+ 
+  // trivial case of empty event
   if ( inputs.empty() ) {
-    //std::cout<<"===========================>empty vector<===========================>"<< std::endl;
     IJetMaker::Jets output;
-
     output.reserve( 0 );
-
     jets_ = output;
 
     if ( msgLevel( MSG::DEBUG ) ) { counter( "#jets" ) += output.size(); }
 
     return StatusCode::SUCCESS;
   } 
-
+  // execute constituent subtractor if enabled
   if (m_cs_enable) {
-    //std::cout<<"===========================>ConSub'ed<===========================>"<< std::endl;
-    //std::cout<< "===========================>"<<m_cs_enable<< "<===========================" << std::endl;
     subjets.reserve(inputs.size());
-    
+    //run constituent subtractor
     StatusCode sc = m_cs->subJets(inputs, subjets);
     
     if (sc.isFailure()) {
@@ -167,8 +161,7 @@ StatusCode LoKi::FastJetMaker::makeJets( const IJetMaker::Input& input_, IJetMak
     }
     clusters = new fastjet::ClusterSequence( subjets, jetDef );
   } else {
-    //std::cout<<"===========================>no ConSub<===========================>"<< std::endl;
-    //std::cout<< "===========================>"<<m_cs_enable<< "<===========================" << std::endl;
+    // if constituent subtractor is disabled
     clusters = new fastjet::ClusterSequence( inputs, jetDef );
   }
   

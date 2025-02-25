@@ -38,12 +38,8 @@
  *
  *  The abstract interface to Constituent Subtractor
  *
- *  @attention It is a responsibility of users (e.g. the algorithm)
- *             to take care about the ownership of jets *AND* their
- *             vertices). The tool is not intended to do it!
- *
  *  @author Ruide Xu ruidexu@umich.edu
- *  @date   
+ *  @date   2025-02-24
  */
 struct GAUDI_API IConstituentSubtractor : extend_interfaces<IAlgTool> {
   // ==========================================================================
@@ -52,10 +48,6 @@ struct GAUDI_API IConstituentSubtractor : extend_interfaces<IAlgTool> {
     DeclareInterfaceID( IConstituentSubtractor, 1, 0 );
   // ==========================================================================
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // Only the output type and input type needs to be defined
-  // The peusdojet conversion is taken care off in the LoKiConstituentSubtractor.cpp/.h
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   /// the actual type of input data container
   typedef std::vector<fastjet::PseudoJet>& Input;
   /// the actual type of output container of jets
@@ -63,17 +55,8 @@ struct GAUDI_API IConstituentSubtractor : extend_interfaces<IAlgTool> {
   // ==========================================================================
   /** The main method: Constituent Subtraction
    *
-   *  @code
-   *
-   *  @endcode
-   *
-   *  @attention It is a responsibility of users (e.g. the algorithm)
-   *             to take care about the ownership of jets *AND* their
-   *             vertices). The tool is not intended to do it!
-   *
-   *
    *  @param rawJets        container of raw pseudo-jets
-   *  @param subtracteJets  container of processed output pseudo-jets with subtracted constituent
+   *  @param subtracteJets  container of processed output pseudo-jets with subtracted constituents
    *  @return status code
    */
   public:

@@ -8,12 +8,12 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: LoKiBackgroundSub.cpp,v 0.1 2024-01-24 14:18:00 elesser Exp $
+// $Id: LoKiConstituentSub.cpp,v 1.1 2025-02-24 10:42:00 ruide Exp $
 // ============================================================================
 /** @file
  *  Implementation file for class LoKi::ConstituentSub
- *  @author Ezra LESSER elesser@berkeley.edu Ruide Xu ruidexu@umich.edu
- *  @date   
+ *  @author Ruide Xu ruidexu@umich.edu, Ezra LESSER elesser@berkeley.edu 
+ *  @date   2025-02-24
  */
 
 #include "LoKiConstituentSub.h"
@@ -52,7 +52,7 @@ StatusCode LoKi::ConstituentSub::initializeSubtractor(
   this->m_subtractor->set_ghost_area(this->m_ghost_area);
   this->m_subtractor->set_max_eta(this->m_max_eta);
   this->m_subtractor->set_background_estimator((fastjet::BackgroundEstimatorBase*)(&m_bge_rho));
-  //this->m_subtractor->set_background_estimator(m_bge_rho);
+
   
 
   // How to treat massive particles
@@ -73,86 +73,7 @@ StatusCode LoKi::ConstituentSub::initializeSubtractor(
   return StatusCode::SUCCESS;
 }
 
-
-//|---> rdc <---| Not needed
-// ===========================================================================
-// Convert input object into a vector of fastjet::PseudoJet objects
-/*StatusCode LoKi::ConstituentSub::prepareEvent(
-  const IJetMaker::Input& input, std::vector<fastjet::PseudoJet>& full_event ) const {
-
-  full_event.reserve( input.size() );
-  for ( IJetMaker::Input::const_iterator ip = input.begin(); input.end() != ip; ++ip ) {
-    const LHCb::Particle* p = *ip;
-    if ( NULL == p ) {
-      Warning( "Invalid input particle" ).ignore();
-      continue;
-    }
-    full_event.push_back( this->makeJet( p, this->to_user_index( ip - input.begin() ) ) );
-  }
-
-  return StatusCode::SUCCESS;
-}*/
-
-
-//|---> rdc <---| Not needed
-// ===========================================================================
-// Process output "jets" into output particles
-/*StatusCode LoKi::ConstituentSub::prepareOutput(
-  const IJetMaker::Input& input, const std::vector<fastjet::PseudoJet>& corrected_event,
-  IJetMaker::Jets& output ) const {
-
-  output.reserve( corrected_event.size() );
-
-  // Stand-in values for surviving ghost particles
-  const int ghost_pid = 0;
-  const LoKi::Point3D ghost_point = LoKi::Point3D( 0, 0, 0 );
-
-  for ( const fastjet::PseudoJet & fjparticle : corrected_event ) {
-    LHCb::Particle particle;
-
-    // Save the particle PID and reference point from input particle
-    const int index = this->from_user_index( fjparticle.user_index() );
-    if ( index >= 0 ) {  // Saved from full_event
-      // Find the appropriate input particle
-      const LHCb::Particle* input_particle = input[index];
-      particle.setParticleID( input_particle->particleID() );
-      particle.setReferencePoint( input_particle->referencePoint() );
-    } else {  // Probably a surviving ghost
-      particle.setParticleID( LHCb::ParticleID( ghost_pid ) );
-      particle.setReferencePoint( ghost_point );
-    }
-
-    // Save the corrected four-momentum
-    particle.setMomentum( Gaudi::LorentzVector( fjparticle.px(), fjparticle.py(), fjparticle.pz(), fjparticle.e() ) );
-
-    output.push_back( particle.clone() );
-  }
-
-  return StatusCode::SUCCESS;
-}*/
-
-//|---> rdc <---| Not needed
-// ===========================================================================
-// Process input particles into background-subtracked output particles (as "jets")
-//StatusCode LoKi::ConstituentSub::makeJets(
-   //const IJetMaker::Input& input, const LHCb::RecVertex& vtx, IJetMaker::Jets& jets_ ) const {
-
-   //return this->makeJets( input, jets_ ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
-//}
-
-// ===========================================================================
-// Process input particles into background-subtracked output particles (as "jets")
-///------>rdc<------ Made this function mutable, the set_partciles member is a non const function, cannot be called
 StatusCode LoKi::ConstituentSub::subJets( IConstituentSubtractor::Input const &rawJets, IConstituentSubtractor::Output &subtractedJets ) const {
-
-  // First process particles from event into a vector of fastjet::PseudoJet objects
-  //std::vector<fastjet::PseudoJet> full_event;
-  //StatusCode sc = this->prepareEvent(rawJets, full_event);
-  /*if ( sc.isFailure() ) {
-    std::cerr << "Could not prepare event for Constituent Subtractor" << std::endl;
-    return sc;
-  }
-  */
 
   // Trivial case of no particles in event
   if ( rawJets.empty() ) {
@@ -163,20 +84,10 @@ StatusCode LoKi::ConstituentSub::subJets( IConstituentSubtractor::Input const &r
 
   // Estimate the background density (rho) for this event
   this->m_bge_rho.set_particles(rawJets);
-  //std::cout<<"======================input: "<<rawJets.size()<<"============================="<<std::endl;
+  // Constituent Subtraction Routine
   std::vector<fastjet::PseudoJet> corrected_event = this->m_subtractor->subtract_event(rawJets);
-  //std::cout<<"======================output: "<<corrected_event.size()<<"============================="<<std::endl;
-  // copy the corrected_event to subtracted Jets
+
   subtractedJets = corrected_event;
-  
-  // Copy corrected event into the proper output object
-  /*IConstituentSubtractor::Output output{};
-  sc = this->prepareOutput(rawJets, corrected_event, output);
-  if ( sc.isFailure() ) {
-    std::cerr << "Could not prepare output for Constituent Subtractor" << std::endl;
-    return sc;
-  }
-  */
 
   if ( msgLevel( MSG::DEBUG ) && !(this->m_suppress_logging) ) { counter( "#jets" ) += subtractedJets.size(); }
 

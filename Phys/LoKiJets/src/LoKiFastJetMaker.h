@@ -286,7 +286,7 @@ namespace LoKi {
     // the assignement operator is disabled
     FastJetMaker& operator=( const FastJetMaker& );
 
-    //declare parameters of constituent subtractor
+    //constituent subtractor related declarations
     double m_max_distance;      // maximum allowed distance between particle i and ghost k
     double m_alpha;             // free parameter for distance measure (exponent of pT)
     double m_ghost_area;         // ghost "area" (A_g) to set density of ghosts (smaller is better but slower)
@@ -299,10 +299,8 @@ namespace LoKi {
     // Options: 0 (fastjet::contrib::ConstituentSubtractor::deltaR)
     //          1 (fastjet::contrib::ConstituentSubtractor::angle)
     int m_distance_type;
+    // if suppress output for constituent subtractor
     bool m_suppress_logging;
-
-    
-    //constituent subtractor related declarations
     //Declare constituent subtractor interface
     IConstituentSubtractor* m_cs = nullptr; 
 

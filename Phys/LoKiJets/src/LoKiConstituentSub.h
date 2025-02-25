@@ -8,12 +8,12 @@
 * granted to it by virtue of its status as an Intergovernmental Organization  *
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
-// $Id: LoKiBackgroundSub.h,v 0.1 2024-01-24 14:18:00 elesser Exp $
+// $Id: LoKiConstituentSub.h,v 1.1 2025-02-24 10:42:00 ruide Exp $
 // ============================================================================
 /** @file
  *  Header file for class LoKi::ConstituentSub
- *  @author Ezra LESSER elesser@berkeley.edu Ruide Xu ruidexu@umich.edu
- *  @date   
+ *  @author Ruide Xu ruidexu@umich.edu Ezra LESSER elesser@berkeley.edu 
+ *  @date   2025-02-24
  */
 
 #ifndef LOKICONSTITUENTSUB_H
@@ -91,7 +91,6 @@ namespace LoKi {
         StatusCode sc = this->initializeSubtractor(
           this->m_keep_original_masses, this->m_fix_pseudorapidity,
           this->m_do_mass_subtraction, this->m_scale_fourmomentum );
-        //if ( sc.isFailure() ) { return sc; }
 
         declareInterface<IConstituentSubtractor>( this );
         declareProperty( "CS_MaxDistance", m_max_distance, "Maximum allowed distance between particle i and ghost k" );
@@ -141,7 +140,6 @@ namespace LoKi {
 
       fastjet::Selector sel_max_pt;
 
-
       // Check all of the parameters which should be initialized
       inline StatusCode checkParams() const {
         if ( m_max_distance < 0 || m_alpha < 0 || m_min_eta < 0 || m_max_eta < 0 || m_bge_rho_grid_size_rap < 0 ||
@@ -151,9 +149,7 @@ namespace LoKi {
         return StatusCode::SUCCESS;
       }
 
-      //fastjet::GridMedianBackgroundEstimator* m_bge_rho = nullptr;  // Background estimator
-      //fastjet::GridMedianBackgroundEstimator* m_bge_rho = new fastjet::GridMedianBackgroundEstimator(6,0.2);  // Background estimator
-      // look at GridMedianBackgroundEstimator and how does it look at max_eta.
+      // Determines the area and the grid size for background mometum estimator
       mutable fastjet::GridMedianBackgroundEstimator m_bge_rho = fastjet::GridMedianBackgroundEstimator( m_min_eta, m_max_eta, m_bge_rho_grid_size_rap, m_bge_rho_grid_size_azm);
       fastjet::contrib::ConstituentSubtractor* m_subtractor = nullptr;  // Background subtractor object
 
@@ -161,35 +157,6 @@ namespace LoKi {
       StatusCode initializeSubtractor(
         const bool keep_original_masses = false, const bool fix_pseudorapidity = false,
         const bool do_mass_subtraction = false, const bool scale_fourmomentum = false);
-
-      //|---> rdc <---| Should I change these two lines in FastjetMaker?
-      //|---> rdc <---| Should not be necessary if not doing data type conversion
-
-      // Helper fuctions to adjust index values so that they are unaffected by other particles
-      // (e.g. ghosts) which may or may not be created with conflicting user indices
-      // in pb-pb event, there may be id over 10k.
-      //int to_user_index( const int index ) const { return index + 1000000; }
-      //int from_user_index( const int index ) const { return index - 1000000; }
-      
-      //|---> rdc <---| Not needed
-      /*// Convert input object into a vector of fastjet::PseudoJet objects
-      StatusCode prepareEvent(
-        const IJetMaker::Input& input, std::vector<fastjet::PseudoJet>& full_event) const;*/
-      // Process output "jets" into output particles
-      /*StatusCode prepareOutput(
-        const std::vector<const std::vector<fastjet::PseudoJet>& corrected_event,
-        std::vector<fastjet::PseudoJet>& corrected_event output) const;
-      */
-
-      //|---> rdc <---| Not needed
-      // Function which converts LHCb::Particle into fastjet::PseudoJet
-      /*inline fastjet::PseudoJet makeJet( const LHCb::Particle* p, const int index ) const {
-        if ( !p ) { return fastjet::PseudoJet(); }
-        const Gaudi::LorentzVector& v = p->momentum();
-        fastjet::PseudoJet jet( v.Px(), v.Py(), v.Pz(), v.E() );
-        jet.set_user_index( index );
-        return jet;
-      }*/
   };
 }
 
