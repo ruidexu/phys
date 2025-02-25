@@ -36,20 +36,20 @@
 // ============================================================================
 /** @class IConstituentSubtractor IConstituentSubtractor.h Kernel/IConstituentSubtractor.h
  *
- *  The abstract interface to Constituent Substracotr
+ *  The abstract interface to Constituent Subtractor
  *
  *  @attention It is a responsibility of users (e.g. the algorithm)
  *             to take care about the ownership of jets *AND* their
  *             vertices). The tool is not intended to do it!
  *
  *  @author Ruide Xu ruidexu@umich.edu
- * Lancast QFT textbook, learn who is teaching
  *  @date   
  */
 struct GAUDI_API IConstituentSubtractor : extend_interfaces<IAlgTool> {
   // ==========================================================================
   /// interface machinery
-  DeclareInterfaceID( IConstituentSubtractor, 2, 0 );
+  public:
+    DeclareInterfaceID( IConstituentSubtractor, 1, 0 );
   // ==========================================================================
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -76,7 +76,8 @@ struct GAUDI_API IConstituentSubtractor : extend_interfaces<IAlgTool> {
    *  @param subtracteJets  container of processed output pseudo-jets with subtracted constituent
    *  @return status code
    */
-  virtual StatusCode subJets( const Input& rawJets, Output& subtractedJets ) const = 0;
+  public:
+    virtual StatusCode subJets(  Input const &rawJets, Output& subtractedJets ) const = 0;
 };
 // ============================================================================
 // The END

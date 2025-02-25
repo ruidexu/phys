@@ -305,21 +305,26 @@ class HltJetBuilderConf(object):
             "JetInfo": True,
             "JetEcPath": "JEC1405",
             "JetEcShift": 0.0,
-            "enableConstituentSubtractor": False,
-            "MaxDistance": 0.3,
-            "Alpha": 1,
-            "MaxEta": 6,
-            "BgERhoGridSize": 0.2,
-            "MaxPtCorrect": 5,
-            "GhostArea": 0.01,
-            "SuppressLogging": False,
-            "DistanceType": 0
+
+            "JB_MaxDistance": 0.3,
+            "JB_Alpha": 1,
+            ##### change all the default value to 2 and 4.5
+            "JB_MinEta": 2,
+            "JB_MaxEta": 5,
+            "JB_BgERhoGridSize_rap": 0.2,
+            "JB_BgERhoGridSize_azm": 0.2,
+            "JB_MaxPtCorrect": 5,
+            "JB_GhostArea": 0.01,
+            "JB_SuppressLogging": False,
+            "JB_DistanceType": 0,
+            "JB_enableConstituentSubtractor": False
         }
 
         self.params.update(**kwargs)
 
         self.name = _name
         self.jetid = jetid
+        
         if isinstance(_inputs, six.string_types):
             self.inputs = [_inputs]
         else:

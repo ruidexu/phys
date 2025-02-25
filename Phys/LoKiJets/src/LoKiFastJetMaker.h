@@ -120,10 +120,12 @@ namespace LoKi {
         , m_max_distance( 0.3 )
         , m_alpha( 1 )
         , m_ghost_area( 0.01 )
-        , m_max_eta( 6 )
-        , m_bge_rho_grid_size( 0.2 )
+        , m_min_eta( 2 )
+        , m_max_eta( 5 )
+        , m_bge_rho_grid_size_azm( 0.2 )
+        , m_bge_rho_grid_size_rap( 0.2 )
         , m_max_pt_correct( 5 )
-        , m_distance_type( 0 )
+        , m_distance_type( 1 )
         , m_suppress_logging( false )
         //
         , m_jetID( 98 )
@@ -139,8 +141,8 @@ namespace LoKi {
         , m_showBanner( false )
         //
         , m_combinerName( "MomentumCombiner" )
-        , m_combiner( 0 )  
-        , m_cs_enable( false ){
+        , m_combiner( 0 )
+        , m_cs_enable(false){
       //
       declareInterface<IJetMaker>( this );
       //
@@ -158,15 +160,17 @@ namespace LoKi {
       declareProperty( "ParticleCombiner", m_combinerName );
 
       //constituent subtractor properties
-      declareProperty( "enableConstituentSubtractor", m_cs_enable = false, "enable constituent subtractor" );
-      declareProperty( "MaxDistance", m_max_distance, "Maximum allowed distance between particle i and ghost k" );
-      declareProperty( "Alpha", m_alpha, "Free parameter for distance measure (exponent of pT)]" );
-      declareProperty( "MaxEta", m_max_eta, "Maximum pseudorapidity for input particles to the subtraction" );
-      declareProperty( "BgERhoGridSize", m_bge_rho_grid_size, "Requested grid spacing for grid-median background estimator" );
-      declareProperty( "MaxPtCorrect", m_max_pt_correct, "Particles with pT > MaxPtCorrect will not be corrected" );
-      declareProperty( "GhostArea", m_ghost_area, "Ghost 'area' (A_g) to set density of ghosts (smaller is better but slower)" );
-      declareProperty( "SuppressLogging", m_suppress_logging, "Suppress standard output logging (useful for batch mode)" );
-      declareProperty( "DistanceType", m_distance_type, "Type of distance measure between particle i and ghost k. Options: 0 (deltaR), 1 (angle)" );
+      declareProperty( "JM_enableConstituentSubtractor", m_cs_enable, "enable constituent subtractor" );
+      declareProperty( "JM_MaxDistance", m_max_distance, "Maximum allowed distance between particle i and ghost k" );
+      declareProperty( "JM_Alpha", m_alpha, "Free parameter for distance measure (exponent of pT)]" );
+      declareProperty( "JM_MinEta", m_min_eta, "Minimum pseudorapidity for input particles to the subtraction" );
+      declareProperty( "JM_MaxEta", m_max_eta, "Maximum pseudorapidity for input particles to the subtraction" );
+      declareProperty( "JM_BgERhoGridSize_rap", m_bge_rho_grid_size_rap, "Requested rapidity grid spacing for grid-median background estimator" );
+      declareProperty( "JM_BgERhoGridSize_azm", m_bge_rho_grid_size_azm, "Requested azimuthal grid spacing for grid-median background estimator" );
+      declareProperty( "JM_MaxPtCorrect", m_max_pt_correct, "Particles with pT > MaxPtCorrect will not be corrected" );
+      declareProperty( "JM_GhostArea", m_ghost_area, "Ghost 'area' (A_g) to set density of ghosts (smaller is better but slower)" );
+      declareProperty( "JM_SuppressLogging", m_suppress_logging, "Suppress standard output logging (useful for batch mode)" );
+      declareProperty( "JM_DistanceType", m_distance_type, "Type of distance measure between particle i and ghost k. Options: 0 (deltaR), 1 (angle)" );
     }
     /// destructor
     virtual ~FastJetMaker() {}
@@ -283,22 +287,24 @@ namespace LoKi {
     FastJetMaker& operator=( const FastJetMaker& );
 
     //declare parameters of constituent subtractor
-    double m_max_distance = 0.3;      // maximum allowed distance between particle i and ghost k
-    double m_alpha = 1;             // free parameter for distance measure (exponent of pT)
-    double m_ghost_area = 0.01;         // ghost "area" (A_g) to set density of ghosts (smaller is better but slower)
-    double m_max_eta = 6;           // maximum pseudorapidity for input particles to the subtraction
-    double m_bge_rho_grid_size = 0.2; // requested grid spacing for grid-median background estimator
-    double m_max_pt_correct = 5;    // particles with pT above this value will not be corrected
+    double m_max_distance;      // maximum allowed distance between particle i and ghost k
+    double m_alpha;             // free parameter for distance measure (exponent of pT)
+    double m_ghost_area;         // ghost "area" (A_g) to set density of ghosts (smaller is better but slower)
+    double m_min_eta;           // minimum pseudorapidity for input particles to the subtraction
+    double m_max_eta;           // maximum pseudorapidity for input particles to the subtraction
+    double m_bge_rho_grid_size_rap; // requested rapidity grid spacing for grid-median background estimator
+    double m_bge_rho_grid_size_azm; // requested azimuthal grid spacing for grid-median background estimator
+    double m_max_pt_correct;    // particles with pT above this value will not be corrected
     // type of distance between particle i and ghost k
     // Options: 0 (fastjet::contrib::ConstituentSubtractor::deltaR)
     //          1 (fastjet::contrib::ConstituentSubtractor::angle)
-    int m_distance_type = 0;
-    bool m_suppress_logging = false;
+    int m_distance_type;
+    bool m_suppress_logging;
 
     
     //constituent subtractor related declarations
     //Declare constituent subtractor interface
-    IConstituentSubtractor* m_cs; 
+    IConstituentSubtractor* m_cs = nullptr; 
 
   protected:
     // proposed jet ID

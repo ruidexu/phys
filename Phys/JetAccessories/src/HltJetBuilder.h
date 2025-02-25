@@ -144,8 +144,10 @@ private:
   double m_max_distance;      // maximum allowed distance between particle i and ghost k
   double m_alpha;             // free parameter for distance measure (exponent of pT)
   double m_ghost_area;         // ghost "area" (A_g) to set density of ghosts (smaller is better but slower)
+  double m_min_eta;           // minimum pseudorapidity for input particles to the subtraction
   double m_max_eta;           // maximum pseudorapidity for input particles to the subtraction
-  double m_bge_rho_grid_size; // requested grid spacing for grid-median background estimator
+  double m_bge_rho_grid_size_rap; // requested rapidity grid spacing for grid-median background estimator
+  double m_bge_rho_grid_size_azm; // requested azimuthal grid spacing for grid-median background estimator
   double m_max_pt_correct;    // particles with pT above this value will not be corrected
   // type of distance between particle i and ghost k
   // Options: 0 (fastjet::contrib::ConstituentSubtractor::deltaR)

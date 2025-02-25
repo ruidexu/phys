@@ -39,33 +39,36 @@
  */
 // ============================================================================
 StatusCode LoKi::FastJetMaker::initialize() {
+
   StatusCode sc = GaudiTool::initialize();
+
   if ( sc.isFailure() ) { return sc; }
   // check the parameters
   sc = check();
+  //
   if ( sc.isFailure() ) { return sc; }
   //
   svc<LoKi::ILoKiSvc>( "LoKiSvc", true );
   //
   if ( !m_showBanner ) fastjet::ClusterSequence::set_fastjet_banner_stream( 0 );
-  if (m_cs_enable){
-    if ( !m_cs ) m_cs = tool<IConstituentSubtractor>( "LoKi::ConstituentSub", this );
-    if ( !m_cs ) return Error( "Could not retrieve ConstituentSubtractor." );
-    std::cout<<"1-------------->";
-    GaudiTool* cs = dynamic_cast<GaudiTool*>( m_cs );
-    std::cout<<"2-------------->";
-    
-    cs->setProperty( "MaxDistance", m_max_distance ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
-    cs->setProperty( "Alpha", m_alpha ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
-    cs->setProperty( "MaxEta", m_max_eta ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
-    cs->setProperty( "BgERhoGridSize", m_bge_rho_grid_size ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
-    cs->setProperty( "MaxPtCorrect", m_max_pt_correct ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
-    cs->setProperty( "GhostArea", m_ghost_area ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
-    cs->setProperty( "SuppressLogging", m_suppress_logging ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
-    cs->setProperty( "DistanceType", m_distance_type ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
-
-  }
+  //
+  if ( !m_cs ) m_cs = tool<IConstituentSubtractor>( "LoKi::ConstituentSub", this );
+  if ( !m_cs ) return Error( "Could not retrieve ConstituentSubtractor." );
   
+  GaudiTool* cs = dynamic_cast<GaudiTool*>( m_cs );
+  std::cout<<"===========================>CS tool retrieved<===========================>"<< std::endl;
+  std::cout<< "===========================>"<<m_cs_enable<< "<===========================" << std::endl;
+  
+  cs->setProperty( "CS_MaxDistance", m_max_distance ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  cs->setProperty( "CS_Alpha", m_alpha ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  cs->setProperty( "CS_MinEta", m_min_eta ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  cs->setProperty( "CS_MaxEta", m_max_eta ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  cs->setProperty( "CS_BgERhoGridSize_rap", m_bge_rho_grid_size_azm ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  cs->setProperty( "CS_BgERhoGridSize_azm", m_bge_rho_grid_size_rap ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  cs->setProperty( "CS_MaxPtCorrect", m_max_pt_correct ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  cs->setProperty( "CS_GhostArea", m_ghost_area ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  cs->setProperty( "CS_SuppressLogging", m_suppress_logging ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
+  cs->setProperty( "CS_DistanceType", m_distance_type ).ignore( /* AUTOMATICALLY ADDED FOR gaudi/Gaudi!763 */ );
 
   return sc;
 }
@@ -131,13 +134,6 @@ StatusCode LoKi::FastJetMaker::makeJets( const IJetMaker::Input& input_, IJetMak
 
   fastjet::JetDefinition jetDef = prepare( input_, inputs );
 
-  if ( inputs.empty() ) {
-    IJetMaker::Jets output;
-    output.reserve( 0 );
-    jets_ = output;
-    if ( msgLevel( MSG::DEBUG ) ) { counter( "#jets" ) += output.size(); }
-    return StatusCode::SUCCESS;
-  }
   // Jets found
   Jets_ jets;
 
@@ -146,16 +142,33 @@ StatusCode LoKi::FastJetMaker::makeJets( const IJetMaker::Input& input_, IJetMak
   fastjet::ClusterSequence* clusters = nullptr;
 
   // execute constituent subtractor
-  if (m_cs_enable){
+  if ( inputs.empty() ) {
+    //std::cout<<"===========================>empty vector<===========================>"<< std::endl;
+    IJetMaker::Jets output;
+
+    output.reserve( 0 );
+
+    jets_ = output;
+
+    if ( msgLevel( MSG::DEBUG ) ) { counter( "#jets" ) += output.size(); }
+
+    return StatusCode::SUCCESS;
+  } 
+
+  if (m_cs_enable) {
+    //std::cout<<"===========================>ConSub'ed<===========================>"<< std::endl;
+    //std::cout<< "===========================>"<<m_cs_enable<< "<===========================" << std::endl;
     subjets.reserve(inputs.size());
+    
     StatusCode sc = m_cs->subJets(inputs, subjets);
+    
     if (sc.isFailure()) {
         return sc;
     }
     clusters = new fastjet::ClusterSequence( subjets, jetDef );
-  }
-  else
-  {
+  } else {
+    //std::cout<<"===========================>no ConSub<===========================>"<< std::endl;
+    //std::cout<< "===========================>"<<m_cs_enable<< "<===========================" << std::endl;
     clusters = new fastjet::ClusterSequence( inputs, jetDef );
   }
   
